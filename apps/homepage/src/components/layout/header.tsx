@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ThemeToggle } from './theme-toggle'
 import { LanguageSelector } from './language-selector'
+import { ToolsDropdown } from './tools-dropdown'
 import { ProfileDropdown } from '@/components/dashboard/profile-dropdown'
 import { useUserStore } from '@/stores/user-store'
 import { useAnnouncementsStore } from '@/stores/announcements-store'
@@ -68,48 +69,76 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6" data-tour="main-nav">
-            <Link
-              href="/"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/tools"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Tools
-            </Link>
-            <Link
-              href="/analytics"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/billing"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Billing
-            </Link>
-            <Link
-              href="/status"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Status
-            </Link>
-            <Link
-              href="/export"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Export
-            </Link>
-            <Link
-              href="/profile"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Profile
-            </Link>
+            {isAuthenticated ? (
+              // Authenticated Navigation
+              <>
+                <Link
+                  href="/"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/tools"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Tools
+                </Link>
+                <Link
+                  href="/analytics"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Analytics
+                </Link>
+                <Link
+                  href="/billing"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Billing
+                </Link>
+                <Link
+                  href="/status"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Status
+                </Link>
+                <Link
+                  href="/export"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Export
+                </Link>
+                <Link
+                  href="/profile"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Profile
+                </Link>
+              </>
+            ) : (
+              // Public Navigation
+              <>
+                <Link
+                  href="/"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Home
+                </Link>
+                <ToolsDropdown />
+                <Link
+                  href="/pricing"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="/about"
+                  className="text-sm font-medium transition-colors hover:text-primary"
+                >
+                  About
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Right side actions */}
@@ -177,27 +206,78 @@ export function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
-              <Link
-                href="/"
-                className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/tools"
-                className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Tools
-              </Link>
-              <Link
-                href="/profile"
-                className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Profile
-              </Link>
+              {isAuthenticated ? (
+                // Authenticated Mobile Nav
+                <>
+                  <Link
+                    href="/"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/tools"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Tools
+                  </Link>
+                  <Link
+                    href="/analytics"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Analytics
+                  </Link>
+                  <Link
+                    href="/billing"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Billing
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                </>
+              ) : (
+                // Public Mobile Nav
+                <>
+                  <Link
+                    href="/"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    href="/tools"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Tools
+                  </Link>
+                  <Link
+                    href="/pricing"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Pricing
+                  </Link>
+                  <Link
+                    href="/about"
+                    className="block px-3 py-2 text-base font-medium transition-colors hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    About
+                  </Link>
+                </>
+              )}
               {/* Mobile Search */}
               <div className="px-3 py-2">
                 <div className="relative">
