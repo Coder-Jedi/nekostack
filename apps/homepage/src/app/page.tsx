@@ -176,6 +176,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Tools Preview Section - Moved up to showcase tools first */}
+      <section className="py-12">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Featured Tools</h2>
+          <p className="text-muted-foreground">
+            Explore our most popular productivity tools
+          </p>
+        </div>
+        
+        <ToolGrid tools={featuredTools} />
+        
+        <div className="text-center mt-8">
+          <Link 
+            href="/tools"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8"
+          >
+            View All Tools
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-12">
         <div className="text-center mb-12">
@@ -217,28 +239,6 @@ export default function Home() {
               99.9% uptime with global CDN and redundancy.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Tools Preview Section */}
-      <section className="py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Featured Tools</h2>
-          <p className="text-muted-foreground">
-            Explore our most popular productivity tools
-          </p>
-        </div>
-        
-        <ToolGrid tools={featuredTools} />
-        
-        <div className="text-center mt-8">
-          <Link 
-            href="/tools"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8"
-          >
-            View All Tools
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
         </div>
       </section>
 
