@@ -1,0 +1,79 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "search": "搜索",
+    "filter": "筛选",
+    "clear": "清除",
+    "refresh": "刷新",
+    "download": "下载",
+    "upload": "上传",
+    "share": "分享",
+    "copy": "复制",
+    "settings": "设置",
+    "help": "帮助",
+    "about": "关于",
+    "contact": "联系",
+    "privacy": "隐私",
+    "terms": "服务条款"
+  },
+  "navigation": {
+    "dashboard": "仪表板",
+    "tools": "工具",
+    "analytics": "分析",
+    "billing": "账单",
+    "status": "状态",
+    "export": "导出",
+    "profile": "个人资料",
+    "favorites": "收藏",
+    "settings": "设置",
+    "help": "帮助与支持",
+    "logout": "退出登录"
+  },
+  "homepage": {
+    "title": "NekoStack - 您的生产力套件",
+    "subtitle": "7个强大的工具提升您的生产力",
+    "hero": {
+      "title": "使用NekoStack提升您的生产力",
+      "subtitle": "访问7个强大的工具，旨在优化您的工作流程并节省时间",
+      "cta": "免费开始",
+      "learnMore": "了解更多"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "管理您的偏好和账户设置",
+    "sections": {
+      "general": "常规",
+      "appearance": "外观",
+      "notifications": "通知",
+      "privacy": "隐私与安全",
+      "language": "语言与地区",
+      "advanced": "高级"
+    },
+    "appearance": {
+      "title": "外观",
+      "theme": "主题",
+      "themes": {
+        "light": "浅色",
+        "dark": "深色",
+        "system": "系统"
+      }
+    },
+    "language": {
+      "title": "语言与地区",
+      "language": "语言",
+      "region": "地区",
+      "currency": "货币"
+    }
+  }
+}

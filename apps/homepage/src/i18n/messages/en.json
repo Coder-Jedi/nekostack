@@ -1,0 +1,420 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh",
+    "download": "Download",
+    "upload": "Upload",
+    "share": "Share",
+    "copy": "Copy",
+    "settings": "Settings",
+    "help": "Help",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms of Service"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "tools": "Tools",
+    "analytics": "Analytics",
+    "billing": "Billing",
+    "status": "Status",
+    "export": "Export",
+    "profile": "Profile",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "help": "Help & Support",
+    "logout": "Sign out"
+  },
+  "homepage": {
+    "title": "NekoStack - Your Productivity Suite",
+    "subtitle": "7 powerful tools to boost your productivity",
+    "hero": {
+      "title": "Boost Your Productivity with NekoStack",
+      "subtitle": "Access 7 powerful tools designed to streamline your workflow and save you time",
+      "cta": "Get Started Free",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Why Choose NekoStack?",
+      "subtitle": "Everything you need to be more productive",
+      "fast": {
+        "title": "Lightning Fast",
+        "description": "Process files and generate content in seconds, not minutes"
+      },
+      "secure": {
+        "title": "Secure & Private",
+        "description": "Your data is encrypted and never shared with third parties"
+      },
+      "easy": {
+        "title": "Easy to Use",
+        "description": "Intuitive interface designed for users of all skill levels"
+      },
+      "reliable": {
+        "title": "99.9% Uptime",
+        "description": "Reliable service you can count on for your important work"
+      }
+    },
+    "tools": {
+      "title": "Featured Tools",
+      "subtitle": "Discover our most popular productivity tools",
+      "viewAll": "View All Tools"
+    },
+    "cta": {
+      "title": "Ready to boost your productivity?",
+      "subtitle": "Join thousands of users who trust NekoStack for their daily workflow",
+      "button": "Start Free Trial"
+    }
+  },
+  "tools": {
+    "title": "All Tools",
+    "subtitle": "Explore our complete suite of productivity tools",
+    "searchPlaceholder": "Search tools...",
+    "categories": {
+      "all": "All Categories",
+      "image": "Image Processing",
+      "document": "Document Tools",
+      "utility": "Utilities",
+      "generator": "Generators",
+      "converter": "Converters",
+      "analyzer": "Analyzers",
+      "creator": "Creators"
+    },
+    "filters": {
+      "premium": "Premium Only",
+      "new": "New Tools",
+      "popular": "Most Popular"
+    },
+    "card": {
+      "usageCount": "{count} uses",
+      "rating": "Rating: {rating}/5",
+      "premium": "Premium",
+      "new": "New",
+      "free": "Free",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites"
+    },
+    "empty": {
+      "title": "No tools found",
+      "subtitle": "Try adjusting your search or filters",
+      "clearFilters": "Clear Filters"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {name}!",
+    "quickStats": {
+      "toolsUsed": "Tools Used",
+      "favorites": "Favorites", 
+      "usage": "Usage",
+      "plan": "Plan"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity"
+    },
+    "favorites": {
+      "title": "Your Favorites",
+      "subtitle": "Quick access to your most-used tools",
+      "empty": {
+        "title": "No favorites yet",
+        "subtitle": "Star your favorite tools for quick access",
+        "cta": "Browse Tools"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account and preferences",
+    "personalInfo": {
+      "title": "Personal Information",
+      "name": "Full Name",
+      "email": "Email Address",
+      "avatar": "Profile Picture",
+      "joinedDate": "Member since"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "plan": "Current Plan",
+      "status": "Status",
+      "renewsOn": "Renews on",
+      "usage": "Usage this month"
+    },
+    "stats": {
+      "title": "Your Stats",
+      "toolsUsed": "Tools Used",
+      "filesProcessed": "Files Processed",
+      "timeSaved": "Time Saved",
+      "successRate": "Success Rate"
+    }
+  },
+  "billing": {
+    "title": "Billing & Subscription",
+    "subtitle": "Manage your subscription, view usage, and billing history",
+    "currentPlan": {
+      "title": "Current Plan",
+      "nextBilling": "Next billing: {date}",
+      "usage": "Current Usage"
+    },
+    "plans": {
+      "title": "Available Plans",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save {percent}%",
+      "currentPlan": "Current Plan",
+      "upgrade": "Upgrade to {plan}",
+      "features": {
+        "toolUsage": "Tool Usage",
+        "storage": "File Storage", 
+        "fileSize": "Max File Size",
+        "support": "Support",
+        "api": "API Access",
+        "priority": "Priority Support"
+      }
+    },
+    "history": {
+      "title": "Billing History",
+      "empty": {
+        "title": "No billing history",
+        "subtitle": "Your billing history will appear here once you upgrade to a paid plan"
+      },
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "failed": "Failed"
+      }
+    },
+    "paymentMethods": {
+      "title": "Payment Methods",
+      "empty": "No payment methods",
+      "add": "Add payment method",
+      "default": "Default"
+    }
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Track your productivity and tool usage insights",
+    "overview": {
+      "toolsUsed": "Tools Used",
+      "filesProcessed": "Files Processed", 
+      "storageUsed": "Storage Used",
+      "timeSaved": "Time Saved"
+    },
+    "charts": {
+      "usage": "Usage",
+      "files": "Files",
+      "storage": "Storage",
+      "performance": "Performance"
+    },
+    "toolUsage": {
+      "title": "Tool Usage Breakdown",
+      "uses": "{count} uses",
+      "successRate": "Success rate: {rate}%",
+      "avgTime": "Avg time: {time}s"
+    },
+    "goals": {
+      "title": "Goals",
+      "complete": "{percent}% complete",
+      "due": "Due {date}"
+    },
+    "performance": {
+      "title": "Performance",
+      "successRate": "Success Rate",
+      "avgProcessing": "Avg Processing",
+      "peakHour": "Peak Hour",
+      "mostUsed": "Most Used"
+    }
+  },
+  "status": {
+    "title": "System Status",
+    "subtitle": "Real-time status of NekoStack services and infrastructure",
+    "overall": {
+      "operational": "All Systems Operational",
+      "issues": "Some Systems Experiencing Issues",
+      "lastUpdated": "Last updated: {time}"
+    },
+    "services": {
+      "title": "Services",
+      "uptime": "Uptime",
+      "response": "Response"
+    },
+    "incidents": {
+      "title": "Recent Incidents",
+      "impact": "Impact: {impact}",
+      "started": "Started: {date}",
+      "resolved": "Resolved: {date}"
+    },
+    "maintenance": {
+      "title": "Scheduled Maintenance",
+      "scheduled": "Scheduled",
+      "impact": "Impact: {impact}",
+      "affectedServices": "Affected services: {services}"
+    },
+    "metrics": {
+      "title": "System Metrics",
+      "uptimeStreak": "Uptime Streak",
+      "avgResponse": "Avg Response Time",
+      "throughput": "Throughput",
+      "errorRate": "Error Rate",
+      "activeUsers": "Active Users"
+    },
+    "subscribe": "Subscribe to Updates",
+    "autoRefresh": "Auto-refresh"
+  },
+  "export": {
+    "title": "Data Export & Backup",
+    "subtitle": "Export your data and manage automated backups",
+    "usage": {
+      "title": "Export Usage",
+      "exportsThisMonth": "Exports this month",
+      "dataExported": "Data exported",
+      "retentionPeriod": "Retention period",
+      "lastExport": "Last export: {date}",
+      "maxPerExport": "Max per export: {size}",
+      "resets": "Resets on {date}"
+    },
+    "tabs": {
+      "exports": "Recent Exports",
+      "schedules": "Backup Schedules", 
+      "templates": "Templates"
+    },
+    "newExport": "New Export",
+    "recentExports": {
+      "title": "Recent Exports",
+      "empty": {
+        "title": "No exports yet",
+        "subtitle": "Create your first data export to get started",
+        "cta": "Create Export"
+      },
+      "expires": "Expires: {date}",
+      "progress": "{percent}% complete"
+    },
+    "schedules": {
+      "title": "Backup Schedules",
+      "newSchedule": "New Schedule",
+      "frequency": {
+        "daily": "Every day",
+        "weekly": "Every week", 
+        "monthly": "Every month",
+        "quarterly": "Every 3 months",
+        "yearly": "Every year"
+      },
+      "retention": "Retention: {days} days",
+      "next": "Next: {date}",
+      "pause": "Pause schedule",
+      "resume": "Resume schedule",
+      "edit": "Edit schedule",
+      "delete": "Delete schedule"
+    },
+    "templates": {
+      "title": "Export Templates",
+      "uses": "{count} uses",
+      "useTemplate": "Use Template",
+      "copyTemplate": "Copy template",
+      "default": "Default"
+    },
+    "types": {
+      "fullAccount": "Complete Account",
+      "userData": "User Data",
+      "filesOnly": "Files Only",
+      "analyticsData": "Analytics Data",
+      "billingData": "Billing Data",
+      "toolUsage": "Tool Usage",
+      "favorites": "Favorites",
+      "settings": "Settings"
+    },
+    "formats": {
+      "json": "JSON",
+      "csv": "CSV", 
+      "zip": "ZIP Archive",
+      "pdf": "PDF",
+      "xlsx": "Excel"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and account settings",
+    "sections": {
+      "general": "General",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "privacy": "Privacy & Security",
+      "language": "Language & Region",
+      "advanced": "Advanced"
+    },
+    "general": {
+      "title": "General Settings",
+      "timezone": "Timezone",
+      "dateFormat": "Date Format",
+      "timeFormat": "Time Format"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "compactMode": "Compact Mode",
+      "animations": "Enable Animations"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "email": "Email Notifications",
+      "push": "Push Notifications",
+      "marketing": "Marketing Emails",
+      "security": "Security Alerts",
+      "updates": "Product Updates",
+      "maintenance": "Maintenance Notices"
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "analytics": "Usage Analytics",
+      "crashReports": "Crash Reports",
+      "twoFactor": "Two-Factor Authentication",
+      "sessions": "Active Sessions",
+      "dataDownload": "Download My Data",
+      "deleteAccount": "Delete Account"
+    },
+    "language": {
+      "title": "Language & Region",
+      "language": "Language",
+      "region": "Region",
+      "currency": "Currency"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "notFound": "The requested resource was not found.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "forbidden": "Access denied.",
+    "validation": "Please check your input and try again.",
+    "fileSize": "File size exceeds the maximum limit.",
+    "fileType": "File type is not supported.",
+    "quota": "You have exceeded your usage quota.",
+    "subscription": "This feature requires a premium subscription."
+  },
+  "success": {
+    "saved": "Settings saved successfully",
+    "updated": "Updated successfully",
+    "deleted": "Deleted successfully",
+    "copied": "Copied to clipboard",
+    "uploaded": "File uploaded successfully",
+    "exported": "Export created successfully",
+    "subscribed": "Subscribed successfully"
+  }
+}

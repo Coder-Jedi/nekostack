@@ -1,0 +1,79 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "search": "検索",
+    "filter": "フィルター",
+    "clear": "クリア",
+    "refresh": "更新",
+    "download": "ダウンロード",
+    "upload": "アップロード",
+    "share": "共有",
+    "copy": "コピー",
+    "settings": "設定",
+    "help": "ヘルプ",
+    "about": "について",
+    "contact": "お問い合わせ",
+    "privacy": "プライバシー",
+    "terms": "利用規約"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "tools": "ツール",
+    "analytics": "分析",
+    "billing": "請求",
+    "status": "ステータス",
+    "export": "エクスポート",
+    "profile": "プロフィール",
+    "favorites": "お気に入り",
+    "settings": "設定",
+    "help": "ヘルプ・サポート",
+    "logout": "ログアウト"
+  },
+  "homepage": {
+    "title": "NekoStack - あなたの生産性スイート",
+    "subtitle": "生産性を向上させる7つの強力なツール",
+    "hero": {
+      "title": "NekoStackで生産性を向上させましょう",
+      "subtitle": "ワークフローを最適化し、時間を節約する7つの強力なツールにアクセス",
+      "cta": "無料で始める",
+      "learnMore": "詳細を見る"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "subtitle": "設定とアカウント設定を管理",
+    "sections": {
+      "general": "一般",
+      "appearance": "外観",
+      "notifications": "通知",
+      "privacy": "プライバシー・セキュリティ",
+      "language": "言語・地域",
+      "advanced": "詳細"
+    },
+    "appearance": {
+      "title": "外観",
+      "theme": "テーマ",
+      "themes": {
+        "light": "ライト",
+        "dark": "ダーク",
+        "system": "システム"
+      }
+    },
+    "language": {
+      "title": "言語・地域",
+      "language": "言語",
+      "region": "地域",
+      "currency": "通貨"
+    }
+  }
+}

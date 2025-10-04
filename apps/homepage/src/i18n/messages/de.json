@@ -1,0 +1,79 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "clear": "Löschen",
+    "refresh": "Aktualisieren",
+    "download": "Herunterladen",
+    "upload": "Hochladen",
+    "share": "Teilen",
+    "copy": "Kopieren",
+    "settings": "Einstellungen",
+    "help": "Hilfe",
+    "about": "Über",
+    "contact": "Kontakt",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "tools": "Werkzeuge",
+    "analytics": "Analytik",
+    "billing": "Abrechnung",
+    "status": "Status",
+    "export": "Exportieren",
+    "profile": "Profil",
+    "favorites": "Favoriten",
+    "settings": "Einstellungen",
+    "help": "Hilfe & Support",
+    "logout": "Abmelden"
+  },
+  "homepage": {
+    "title": "NekoStack - Ihre Produktivitätssuite",
+    "subtitle": "7 mächtige Werkzeuge zur Steigerung Ihrer Produktivität",
+    "hero": {
+      "title": "Steigern Sie Ihre Produktivität mit NekoStack",
+      "subtitle": "Zugriff auf 7 mächtige Werkzeuge, die Ihren Arbeitsablauf optimieren und Zeit sparen",
+      "cta": "Kostenlos Starten",
+      "learnMore": "Mehr Erfahren"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihre Präferenzen und Kontoeinstellungen",
+    "sections": {
+      "general": "Allgemein",
+      "appearance": "Erscheinungsbild",
+      "notifications": "Benachrichtigungen",
+      "privacy": "Datenschutz & Sicherheit",
+      "language": "Sprache & Region",
+      "advanced": "Erweitert"
+    },
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "theme": "Theme",
+      "themes": {
+        "light": "Hell",
+        "dark": "Dunkel",
+        "system": "System"
+      }
+    },
+    "language": {
+      "title": "Sprache & Region",
+      "language": "Sprache",
+      "region": "Region",
+      "currency": "Währung"
+    }
+  }
+}

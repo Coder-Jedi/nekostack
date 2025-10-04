@@ -1,0 +1,132 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "refresh": "Actualiser",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "share": "Partager",
+    "copy": "Copier",
+    "settings": "Paramètres",
+    "help": "Aide",
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "tools": "Outils",
+    "analytics": "Analyses",
+    "billing": "Facturation",
+    "status": "Statut",
+    "export": "Exporter",
+    "profile": "Profil",
+    "favorites": "Favoris",
+    "settings": "Paramètres",
+    "help": "Aide et Support",
+    "logout": "Se déconnecter"
+  },
+  "homepage": {
+    "title": "NekoStack - Votre Suite de Productivité",
+    "subtitle": "7 outils puissants pour booster votre productivité",
+    "hero": {
+      "title": "Boostez Votre Productivité avec NekoStack",
+      "subtitle": "Accédez à 7 outils puissants conçus pour optimiser votre flux de travail et vous faire gagner du temps",
+      "cta": "Commencer Gratuitement",
+      "learnMore": "En Savoir Plus"
+    },
+    "features": {
+      "title": "Pourquoi Choisir NekoStack ?",
+      "subtitle": "Tout ce dont vous avez besoin pour être plus productif",
+      "fast": {
+        "title": "Ultra Rapide",
+        "description": "Traitez les fichiers et générez du contenu en secondes, pas en minutes"
+      },
+      "secure": {
+        "title": "Sécurisé et Privé",
+        "description": "Vos données sont chiffrées et ne sont jamais partagées avec des tiers"
+      },
+      "easy": {
+        "title": "Facile à Utiliser",
+        "description": "Interface intuitive conçue pour les utilisateurs de tous niveaux"
+      },
+      "reliable": {
+        "title": "99,9% de Disponibilité",
+        "description": "Service fiable sur lequel vous pouvez compter pour votre travail important"
+      }
+    },
+    "tools": {
+      "title": "Outils en Vedette",
+      "subtitle": "Découvrez nos outils de productivité les plus populaires",
+      "viewAll": "Voir Tous les Outils"
+    },
+    "cta": {
+      "title": "Prêt à booster votre productivité ?",
+      "subtitle": "Rejoignez des milliers d'utilisateurs qui font confiance à NekoStack pour leur flux de travail quotidien",
+      "button": "Commencer l'Essai Gratuit"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez vos préférences et paramètres de compte",
+    "sections": {
+      "general": "Général",
+      "appearance": "Apparence",
+      "notifications": "Notifications",
+      "privacy": "Confidentialité et Sécurité",
+      "language": "Langue et Région",
+      "advanced": "Avancé"
+    },
+    "appearance": {
+      "title": "Apparence",
+      "theme": "Thème",
+      "themes": {
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      },
+      "compactMode": "Mode Compact",
+      "animations": "Activer les Animations"
+    },
+    "language": {
+      "title": "Langue et Région",
+      "language": "Langue",
+      "region": "Région",
+      "currency": "Devise"
+    }
+  },
+  "errors": {
+    "generic": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "notFound": "La ressource demandée n'a pas été trouvée.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "forbidden": "Accès refusé.",
+    "validation": "Veuillez vérifier votre saisie et réessayer.",
+    "fileSize": "La taille du fichier dépasse la limite maximale.",
+    "fileType": "Le type de fichier n'est pas pris en charge.",
+    "quota": "Vous avez dépassé votre quota d'utilisation.",
+    "subscription": "Cette fonctionnalité nécessite un abonnement premium."
+  },
+  "success": {
+    "saved": "Paramètres enregistrés avec succès",
+    "updated": "Mis à jour avec succès",
+    "deleted": "Supprimé avec succès",
+    "copied": "Copié dans le presse-papiers",
+    "uploaded": "Fichier téléversé avec succès",
+    "exported": "Export créé avec succès",
+    "subscribed": "Abonné avec succès"
+  }
+}

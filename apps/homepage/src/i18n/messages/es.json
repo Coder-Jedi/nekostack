@@ -1,0 +1,212 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "refresh": "Actualizar",
+    "download": "Descargar",
+    "upload": "Subir",
+    "share": "Compartir",
+    "copy": "Copiar",
+    "settings": "Configuración",
+    "help": "Ayuda",
+    "about": "Acerca de",
+    "contact": "Contacto",
+    "privacy": "Privacidad",
+    "terms": "Términos de Servicio"
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "tools": "Herramientas",
+    "analytics": "Análisis",
+    "billing": "Facturación",
+    "status": "Estado",
+    "export": "Exportar",
+    "profile": "Perfil",
+    "favorites": "Favoritos",
+    "settings": "Configuración",
+    "help": "Ayuda y Soporte",
+    "logout": "Cerrar sesión"
+  },
+  "homepage": {
+    "title": "NekoStack - Tu Suite de Productividad",
+    "subtitle": "7 herramientas poderosas para aumentar tu productividad",
+    "hero": {
+      "title": "Aumenta Tu Productividad con NekoStack",
+      "subtitle": "Accede a 7 herramientas poderosas diseñadas para optimizar tu flujo de trabajo y ahorrarte tiempo",
+      "cta": "Comenzar Gratis",
+      "learnMore": "Saber Más"
+    },
+    "features": {
+      "title": "¿Por Qué Elegir NekoStack?",
+      "subtitle": "Todo lo que necesitas para ser más productivo",
+      "fast": {
+        "title": "Súper Rápido",
+        "description": "Procesa archivos y genera contenido en segundos, no minutos"
+      },
+      "secure": {
+        "title": "Seguro y Privado",
+        "description": "Tus datos están encriptados y nunca se comparten con terceros"
+      },
+      "easy": {
+        "title": "Fácil de Usar",
+        "description": "Interfaz intuitiva diseñada para usuarios de todos los niveles"
+      },
+      "reliable": {
+        "title": "99.9% de Disponibilidad",
+        "description": "Servicio confiable en el que puedes confiar para tu trabajo importante"
+      }
+    },
+    "tools": {
+      "title": "Herramientas Destacadas",
+      "subtitle": "Descubre nuestras herramientas de productividad más populares",
+      "viewAll": "Ver Todas las Herramientas"
+    },
+    "cta": {
+      "title": "¿Listo para aumentar tu productividad?",
+      "subtitle": "Únete a miles de usuarios que confían en NekoStack para su flujo de trabajo diario",
+      "button": "Comenzar Prueba Gratuita"
+    }
+  },
+  "tools": {
+    "title": "Todas las Herramientas",
+    "subtitle": "Explora nuestra suite completa de herramientas de productividad",
+    "searchPlaceholder": "Buscar herramientas...",
+    "categories": {
+      "all": "Todas las Categorías",
+      "image": "Procesamiento de Imágenes",
+      "document": "Herramientas de Documentos",
+      "utility": "Utilidades",
+      "generator": "Generadores",
+      "converter": "Convertidores",
+      "analyzer": "Analizadores",
+      "creator": "Creadores"
+    },
+    "filters": {
+      "premium": "Solo Premium",
+      "new": "Herramientas Nuevas",
+      "popular": "Más Populares"
+    },
+    "card": {
+      "usageCount": "{count} usos",
+      "rating": "Calificación: {rating}/5",
+      "premium": "Premium",
+      "new": "Nuevo",
+      "free": "Gratis",
+      "addToFavorites": "Agregar a favoritos",
+      "removeFromFavorites": "Quitar de favoritos"
+    },
+    "empty": {
+      "title": "No se encontraron herramientas",
+      "subtitle": "Intenta ajustar tu búsqueda o filtros",
+      "clearFilters": "Limpiar Filtros"
+    }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido de vuelta, {name}!",
+    "quickStats": {
+      "toolsUsed": "Herramientas Usadas",
+      "favorites": "Favoritos",
+      "usage": "Uso",
+      "plan": "Plan"
+    },
+    "recentActivity": {
+      "title": "Actividad Reciente",
+      "empty": "Sin actividad reciente"
+    },
+    "favorites": {
+      "title": "Tus Favoritos",
+      "subtitle": "Acceso rápido a tus herramientas más utilizadas",
+      "empty": {
+        "title": "Aún no tienes favoritos",
+        "subtitle": "Marca tus herramientas favoritas para acceso rápido",
+        "cta": "Explorar Herramientas"
+      }
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona tus preferencias y configuración de cuenta",
+    "sections": {
+      "general": "General",
+      "appearance": "Apariencia",
+      "notifications": "Notificaciones",
+      "privacy": "Privacidad y Seguridad",
+      "language": "Idioma y Región",
+      "advanced": "Avanzado"
+    },
+    "general": {
+      "title": "Configuración General",
+      "timezone": "Zona Horaria",
+      "dateFormat": "Formato de Fecha",
+      "timeFormat": "Formato de Hora"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "theme": "Tema",
+      "themes": {
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema"
+      },
+      "compactMode": "Modo Compacto",
+      "animations": "Habilitar Animaciones"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "email": "Notificaciones por Email",
+      "push": "Notificaciones Push",
+      "marketing": "Emails de Marketing",
+      "security": "Alertas de Seguridad",
+      "updates": "Actualizaciones de Producto",
+      "maintenance": "Avisos de Mantenimiento"
+    },
+    "privacy": {
+      "title": "Privacidad y Seguridad",
+      "analytics": "Análisis de Uso",
+      "crashReports": "Reportes de Errores",
+      "twoFactor": "Autenticación de Dos Factores",
+      "sessions": "Sesiones Activas",
+      "dataDownload": "Descargar Mis Datos",
+      "deleteAccount": "Eliminar Cuenta"
+    },
+    "language": {
+      "title": "Idioma y Región",
+      "language": "Idioma",
+      "region": "Región",
+      "currency": "Moneda"
+    }
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "network": "Error de red. Por favor, verifica tu conexión.",
+    "notFound": "El recurso solicitado no fue encontrado.",
+    "unauthorized": "No estás autorizado para realizar esta acción.",
+    "forbidden": "Acceso denegado.",
+    "validation": "Por favor, verifica tu entrada e inténtalo de nuevo.",
+    "fileSize": "El tamaño del archivo excede el límite máximo.",
+    "fileType": "El tipo de archivo no es compatible.",
+    "quota": "Has excedido tu cuota de uso.",
+    "subscription": "Esta función requiere una suscripción premium."
+  },
+  "success": {
+    "saved": "Configuración guardada exitosamente",
+    "updated": "Actualizado exitosamente",
+    "deleted": "Eliminado exitosamente",
+    "copied": "Copiado al portapapeles",
+    "uploaded": "Archivo subido exitosamente",
+    "exported": "Exportación creada exitosamente",
+    "subscribed": "Suscrito exitosamente"
+  }
+}
