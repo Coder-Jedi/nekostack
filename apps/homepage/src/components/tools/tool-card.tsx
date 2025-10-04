@@ -1,10 +1,77 @@
 'use client'
 
 import { ToolCard } from '@nekostack/types'
-import { Star, Crown, Sparkles, Users, TrendingUp } from 'lucide-react'
+import { 
+  Star, 
+  Crown, 
+  Sparkles, 
+  Users, 
+  TrendingUp,
+  Image,
+  QrCode,
+  FileText,
+  ArrowLeftRight,
+  PenTool,
+  FileCheck,
+  Target,
+  LucideIcon
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useAnalytics } from '@/lib/analytics'
+
+// Icon mapping for dynamic rendering
+const iconMap: Record<string, LucideIcon> = {
+  Image,
+  QrCode,
+  FileText,
+  ArrowLeftRight,
+  PenTool,
+  FileCheck,
+  Target,
+}
+
+// Category-based color schemes
+const getCategoryColors = (category: string) => {
+  const colorMap: Record<string, { bg: string, hover: string, icon: string }> = {
+    image: {
+      bg: 'from-purple-500/10 to-purple-500/5',
+      hover: 'group-hover:from-purple-500/20 group-hover:to-purple-500/10',
+      icon: 'text-purple-600 dark:text-purple-400'
+    },
+    utility: {
+      bg: 'from-blue-500/10 to-blue-500/5',
+      hover: 'group-hover:from-blue-500/20 group-hover:to-blue-500/10',
+      icon: 'text-blue-600 dark:text-blue-400'
+    },
+    document: {
+      bg: 'from-green-500/10 to-green-500/5',
+      hover: 'group-hover:from-green-500/20 group-hover:to-green-500/10',
+      icon: 'text-green-600 dark:text-green-400'
+    },
+    converter: {
+      bg: 'from-orange-500/10 to-orange-500/5',
+      hover: 'group-hover:from-orange-500/20 group-hover:to-orange-500/10',
+      icon: 'text-orange-600 dark:text-orange-400'
+    },
+    design: {
+      bg: 'from-pink-500/10 to-pink-500/5',
+      hover: 'group-hover:from-pink-500/20 group-hover:to-pink-500/10',
+      icon: 'text-pink-600 dark:text-pink-400'
+    },
+    productivity: {
+      bg: 'from-indigo-500/10 to-indigo-500/5',
+      hover: 'group-hover:from-indigo-500/20 group-hover:to-indigo-500/10',
+      icon: 'text-indigo-600 dark:text-indigo-400'
+    },
+  }
+  
+  return colorMap[category.toLowerCase()] || {
+    bg: 'from-primary/10 to-primary/5',
+    hover: 'group-hover:from-primary/20 group-hover:to-primary/10',
+    icon: 'text-primary'
+  }
+}
 
 interface ToolCardProps {
   tool: ToolCard
@@ -14,6 +81,7 @@ interface ToolCardProps {
 export function ToolCardComponent({ tool, onFavoriteToggle }: ToolCardProps) {
   const [isFavorite, setIsFavorite] = useState(tool.isFavorite)
   const { toolFavorited, buttonClicked } = useAnalytics()
+  const categoryColors = getCategoryColors(tool.category)
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -44,7 +112,7 @@ export function ToolCardComponent({ tool, onFavoriteToggle }: ToolCardProps) {
 
   return (
     <Link href={tool.url} className="group" onClick={handleToolClick}>
-      <div className="tool-card p-6 h-full relative overflow-hidden group-hover:scale-[1.02] transition-all duration-200" data-tour="tool-card">
+      <div className="tool-card p-6 h-full relative overflow-hidden group-hover:scale-[1.02] group-hover:shadow-xl transition-all duration-300 border-2 border-transparent group-hover:border-primary/10" data-tour="tool-card">
         {/* Premium Badge */}
         {tool.isPremium && (
           <div className="absolute top-4 right-4 z-10">
@@ -79,10 +147,17 @@ export function ToolCardComponent({ tool, onFavoriteToggle }: ToolCardProps) {
         </button>
 
         {/* Tool Icon */}
-        <div className="flex items-center justify-center h-16 w-16 bg-primary/10 rounded-xl mb-4 mx-auto group-hover:bg-primary/20 transition-colors">
-          <span className="text-3xl" role="img" aria-label={tool.name}>
-            {tool.icon}
-          </span>
+        <div className={`flex items-center justify-center h-20 w-20 bg-gradient-to-br ${categoryColors.bg} ${categoryColors.hover} rounded-2xl mb-4 mx-auto transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
+          {(() => {
+            const IconComponent = iconMap[tool.icon]
+            return IconComponent ? (
+              <IconComponent className={`h-10 w-10 ${categoryColors.icon} transition-colors`} strokeWidth={1.5} />
+            ) : (
+              <span className="text-3xl" role="img" aria-label={tool.name}>
+                {tool.icon}
+              </span>
+            )
+          })()}
         </div>
 
         {/* Tool Info */}

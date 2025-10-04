@@ -5,7 +5,7 @@ export const mockTools: ToolCard[] = [
     id: 'image-compressor',
     name: 'Image Compressor & Converter',
     description: 'Compress and convert images while maintaining quality. Supports JPEG, PNG, WebP, and more formats.',
-    icon: '🖼️',
+    icon: 'Image', // Lucide icon name
     category: ToolCategory.IMAGE,
     url: '/tools/image-compressor',
     isPremium: false,
@@ -18,7 +18,7 @@ export const mockTools: ToolCard[] = [
     id: 'qr-generator',
     name: 'QR Code & Barcode Generator',
     description: 'Create custom QR codes and barcodes instantly. Support for URLs, text, WiFi, and contact information.',
-    icon: '📱',
+    icon: 'QrCode', // Lucide icon name
     category: ToolCategory.UTILITY,
     url: '/tools/qr-generator',
     isPremium: false,
@@ -31,7 +31,7 @@ export const mockTools: ToolCard[] = [
     id: 'markdown-editor',
     name: 'Markdown Editor & Converter',
     description: 'Write and convert markdown with live preview. Export to HTML, PDF, and other formats.',
-    icon: '📝',
+    icon: 'FileText', // Lucide icon name
     category: ToolCategory.DOCUMENT,
     url: '/tools/markdown-editor',
     isPremium: false,
@@ -44,7 +44,7 @@ export const mockTools: ToolCard[] = [
     id: 'unit-converter',
     name: 'Unit & Currency Converter',
     description: 'Convert between units of measurement and currencies with real-time exchange rates.',
-    icon: '🔄',
+    icon: 'ArrowLeftRight', // Lucide icon name
     category: ToolCategory.CONVERTER,
     url: '/tools/unit-converter',
     isPremium: false,
@@ -57,7 +57,7 @@ export const mockTools: ToolCard[] = [
     id: 'signature-creator',
     name: 'Digital Signature Creator',
     description: 'Create professional digital signatures for documents and emails with customizable styles.',
-    icon: '✍️',
+    icon: 'PenTool', // Lucide icon name
     category: ToolCategory.DESIGN,
     url: '/tools/signature-creator',
     isPremium: true,
@@ -70,7 +70,7 @@ export const mockTools: ToolCard[] = [
     id: 'resume-builder',
     name: 'Resume Builder',
     description: 'Build professional resumes with modern templates and ATS-friendly formats.',
-    icon: '📄',
+    icon: 'FileCheck', // Lucide icon name
     category: ToolCategory.PRODUCTIVITY,
     url: '/tools/resume-builder',
     isPremium: true,
@@ -83,7 +83,7 @@ export const mockTools: ToolCard[] = [
     id: 'ats-checker',
     name: 'ATS Resume Checker',
     description: 'Check your resume compatibility with Applicant Tracking Systems and get optimization tips.',
-    icon: '🎯',
+    icon: 'Target', // Lucide icon name
     category: ToolCategory.PRODUCTIVITY,
     url: '/tools/ats-checker',
     isPremium: true,
