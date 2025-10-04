@@ -5,23 +5,19 @@ import { useToolsStore } from '@/stores/tools-store'
 import { useUserStore } from '@/stores/user-store'
 import { ToolGrid } from '@/components/tools/tool-grid'
 import { mockTools } from '@/lib/mock-data'
-import { mockUserProfile } from '@/lib/mock-user-data'
 import { Star, Heart } from 'lucide-react'
 import Link from 'next/link'
 
 export default function FavoritesPage() {
   const { tools, setTools, toggleFavorite } = useToolsStore()
-  const { user, setUser } = useUserStore()
+  const { user } = useUserStore()
 
   useEffect(() => {
     // Initialize mock data for development
     if (tools.length === 0) {
       setTools(mockTools)
     }
-    if (!user) {
-      setUser(mockUserProfile)
-    }
-  }, [tools, user, setTools, setUser])
+  }, [tools, setTools])
 
   const favoriteTools = tools.filter(tool => tool.isFavorite)
 
@@ -137,9 +133,4 @@ export default function FavoritesPage() {
       </div>
     </div>
   )
-}
-
-export const metadata = {
-  title: 'Favorite Tools - NekoStack',
-  description: 'Access your favorite productivity tools in one place. Manage and organize your most-used NekoStack tools.',
 }

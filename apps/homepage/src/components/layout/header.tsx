@@ -11,11 +11,10 @@ import { mockAnnouncements } from '@/lib/mock-announcements'
 import { useAnalytics } from '@/lib/analytics'
 import { Search, Menu, User, Bell } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { mockUserProfile } from '@/lib/mock-user-data'
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { user, isAuthenticated, setUser, logout } = useUserStore()
+  const { user, isAuthenticated, logout } = useUserStore()
   const { 
     announcements, 
     setAnnouncements, 
@@ -25,15 +24,7 @@ export function Header() {
   } = useAnnouncementsStore()
   const { buttonClicked, announcementInteraction } = useAnalytics()
 
-  // Mock authentication for development
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // Simulate auto-login for development
-      setTimeout(() => {
-        setUser(mockUserProfile)
-      }, 1000)
-    }
-  }, [isAuthenticated, setUser])
+  // No auto-login - user must click CTA buttons
 
   // Initialize announcements
   useEffect(() => {

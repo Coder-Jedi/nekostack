@@ -9,25 +9,22 @@ import { FavoritesSection } from '@/components/dashboard/favorites-section'
 import { AnnouncementsPanel } from '@/components/announcements/announcements-panel'
 import { RecentFilesWidget } from '@/components/files/recent-files-widget'
 import { CTAManager } from '@/components/cta/cta-manager'
-import { mockUserProfile, mockRecentActivity } from '@/lib/mock-user-data'
+import { mockRecentActivity } from '@/lib/mock-user-data'
 import { mockTools } from '@/lib/mock-data'
 
 export default function ProfilePage() {
-  const { user, recentActivity, setUser, setRecentActivity } = useUserStore()
+  const { user, recentActivity, setRecentActivity } = useUserStore()
   const { tools, setTools, toggleFavorite } = useToolsStore()
 
   useEffect(() => {
-    // Initialize mock data for development
-    if (!user) {
-      setUser(mockUserProfile)
-    }
-    if (recentActivity.length === 0) {
+    // Initialize mock data for development (only for already authenticated users)
+    if (user && recentActivity.length === 0) {
       setRecentActivity(mockRecentActivity)
     }
     if (tools.length === 0) {
       setTools(mockTools)
     }
-  }, [user, recentActivity, tools, setUser, setRecentActivity, setTools])
+  }, [user, recentActivity, tools, setRecentActivity, setTools])
 
   if (!user) {
     return (
@@ -84,9 +81,4 @@ export default function ProfilePage() {
       </div>
     </div>
   )
-}
-
-export const metadata = {
-  title: 'Profile Dashboard - NekoStack',
-  description: 'Manage your NekoStack account, view usage statistics, and access your favorite tools.',
 }

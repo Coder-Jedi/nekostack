@@ -20,11 +20,13 @@ export default function Home() {
     if (tools.length === 0) {
       setTools(mockTools)
     }
-    if (isAuthenticated && !user) {
-      setUser(mockUserProfile)
-      setRecentActivity(mockRecentActivity)
-    }
-  }, [tools, user, isAuthenticated, setTools, setUser, setRecentActivity])
+  }, [tools, setTools])
+
+  // Mock sign-in handler
+  const handleMockSignIn = () => {
+    setUser(mockUserProfile)
+    setRecentActivity(mockRecentActivity)
+  }
 
   // Show only the first 6 tools on homepage
   const featuredTools = mockTools.slice(0, 6)
@@ -161,9 +163,12 @@ export default function Home() {
             Everything you need in one place.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/tools" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+            <button 
+              onClick={handleMockSignIn}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
+            >
               Get Started
-            </Link>
+            </button>
             <Link href="/tools" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8">
               View Tools
             </Link>
@@ -244,9 +249,12 @@ export default function Home() {
           <p className="text-muted-foreground mb-6">
             Join thousands of users who trust NekoStack for their daily workflows.
           </p>
-          <Link href="/tools" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+          <button 
+            onClick={handleMockSignIn}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
+          >
             Start Free Trial
-          </Link>
+          </button>
         </div>
       </section>
     </div>
