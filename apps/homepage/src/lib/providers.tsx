@@ -3,7 +3,7 @@
 import { ThemeProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextIntlClientProvider } from 'next-intl'
-import { SessionProvider } from '@/lib/auth/session-provider'
+import { SupabaseAuthProvider } from '@/lib/auth/supabase-auth-provider'
 import { useState } from 'react'
 
 interface ProvidersProps {
@@ -23,7 +23,7 @@ export function Providers({ children, locale = 'en', messages }: ProvidersProps)
   }))
 
   return (
-    <SessionProvider>
+    <SupabaseAuthProvider>
       <QueryClientProvider client={queryClient}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider
@@ -36,6 +36,6 @@ export function Providers({ children, locale = 'en', messages }: ProvidersProps)
           </ThemeProvider>
         </NextIntlClientProvider>
       </QueryClientProvider>
-    </SessionProvider>
+    </SupabaseAuthProvider>
   )
 }

@@ -1,25 +1,26 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { ThemeToggle } from './theme-toggle'
 import { LanguageSelector } from './language-selector'
 import { ToolsDropdown } from './tools-dropdown'
 import { SignInModal } from '@/components/auth/sign-in-modal'
+import { useAuth } from '@/lib/auth/supabase-auth-provider'
 import { Search, Menu, User, LogOut, Settings, BarChart3 } from 'lucide-react'
 import { useState } from 'react'
 
 export function Header() {
-  const { data: session, status } = useSession()
+  const { user, loading, signOut } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
 
-  const isAuthenticated = status === 'authenticated'
-  const isLoading = status === 'loading'
+  const isAuthenticated = !!user
+  const isLoading = loading
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' })
+    await signOut()
+    setShowProfileMenu(false)
   }
 
   return (
@@ -118,23 +119,23 @@ export function Header() {
             {/* Auth Section */}
             {isLoading ? (
               <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
-            ) : isAuthenticated && session?.user ? (
+            ) : isAuthenticated && user ? (
               // Profile Dropdown
               <div className="relative" data-tour="profile-dropdown">
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center space-x-2 rounded-lg p-2 hover:bg-accent transition-colors"
                 >
-                  {session.user.image ? (
+                  {user.user_metadata?.avatar_url ? (
                     <img
-                      src={session.user.image}
-                      alt={session.user.name || 'User'}
+                      src={user.user_metadata.avatar_url}
+                      alt={user.user_metadata?.full_name || 'User'}
                       className="h-8 w-8 rounded-full"
                     />
                   ) : (
                     <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                       <span className="text-primary-foreground text-sm font-medium">
-                        {session.user.name?.[0] || session.user.email?.[0] || 'U'}
+                        {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
                       </span>
                     </div>
                   )}
@@ -149,9 +150,9 @@ export function Header() {
                     />
                     <div className="absolute right-0 mt-2 w-56 bg-card border rounded-lg shadow-lg py-2 z-50">
                       <div className="px-4 py-3 border-b">
-                        <p className="text-sm font-medium">{session.user.name}</p>
+                        <p className="text-sm font-medium">{user.user_metadata?.full_name || 'User'}</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {session.user.email}
+                          {user.email}
                         </p>
                       </div>
                       <Link

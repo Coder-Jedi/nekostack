@@ -1,6 +1,5 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -24,7 +23,6 @@ export default function SignUpPage() {
     setError(null)
 
     try {
-      // Sign up with Supabase
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -32,6 +30,7 @@ export default function SignUpPage() {
           data: {
             full_name: fullName,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
@@ -44,10 +43,11 @@ export default function SignUpPage() {
       // Show success message
       setSuccess(true)
       
-      // If email confirmation is disabled, sign in automatically
+      // If email confirmation is disabled, redirect automatically
       if (data.session) {
         setTimeout(() => {
-          router.push('/welcome')
+          router.push('/')
+          router.refresh()
         }, 2000)
       }
     } catch (error) {
@@ -61,7 +61,17 @@ export default function SignUpPage() {
     setError(null)
     
     try {
-      await signIn(provider, { callbackUrl: '/welcome' })
+      const { error: signUpError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (signUpError) {
+        setError(`Failed to sign up with ${provider}`)
+        setIsLoading(false)
+      }
     } catch (error) {
       setError(`Failed to sign up with ${provider}`)
       setIsLoading(false)
@@ -201,12 +211,12 @@ export default function SignUpPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                minLength={8}
+                minLength={6}
                 disabled={isLoading}
                 className="w-full px-4 py-3 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Must be at least 8 characters
+                Must be at least 6 characters
               </p>
             </div>
 

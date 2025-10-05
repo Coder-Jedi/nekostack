@@ -1,77 +1,65 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
 import { useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Chrome, Github, ArrowRight, AlertCircle } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function SignInPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
-  const error = searchParams.get('error')
+  const supabase = createClient()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [authError, setAuthError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setAuthError(null)
+    setError(null)
 
     try {
-      const result = await signIn('credentials', {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
-        redirect: false,
       })
 
-      if (result?.error) {
-        setAuthError('Invalid email or password')
-      } else {
-        router.push(callbackUrl)
+      if (signInError) {
+        setError(signInError.message)
+        setIsLoading(false)
+        return
       }
+
+      // Redirect to home on success
+      router.push('/')
+      router.refresh()
     } catch (error) {
-      setAuthError('An error occurred. Please try again.')
-    } finally {
+      setError('An error occurred. Please try again.')
       setIsLoading(false)
     }
   }
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     setIsLoading(true)
-    setAuthError(null)
+    setError(null)
     
     try {
-      await signIn(provider, { callbackUrl })
-    } catch (error) {
-      setAuthError(`Failed to sign in with ${provider}`)
-      setIsLoading(false)
-    }
-  }
+      const { error: signInError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
 
-  const getErrorMessage = (error: string | null) => {
-    switch (error) {
-      case 'OAuthSignin':
-      case 'OAuthCallback':
-      case 'OAuthCreateAccount':
-      case 'EmailCreateAccount':
-        return 'Error connecting to authentication provider'
-      case 'Callback':
-        return 'Error in authentication callback'
-      case 'OAuthAccountNotLinked':
-        return 'Email already in use with different provider'
-      case 'EmailSignin':
-        return 'Error sending verification email'
-      case 'CredentialsSignin':
-        return 'Invalid email or password'
-      case 'SessionRequired':
-        return 'Please sign in to access this page'
-      default:
-        return 'An error occurred during sign in'
+      if (signInError) {
+        setError(`Failed to sign in with ${provider}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      setError(`Failed to sign in with ${provider}`)
+      setIsLoading(false)
     }
   }
 
@@ -87,13 +75,11 @@ export default function SignInPage() {
         </div>
 
         {/* Error Message */}
-        {(error || authError) && (
+        {error && (
           <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm text-destructive font-medium">
-                {authError || getErrorMessage(error)}
-              </p>
+              <p className="text-sm text-destructive font-medium">{error}</p>
             </div>
           </div>
         )}
