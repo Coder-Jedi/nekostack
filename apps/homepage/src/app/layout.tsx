@@ -4,7 +4,6 @@ import "./globals.css";
 import { Providers } from "@/lib/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { CompactAnnouncementBanner } from "@/components/announcements/announcement-banner";
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { PerformanceMonitor } from "@/components/performance/performance-monitor";
 import { OnboardingProvider } from "@/components/onboarding/onboarding-provider";
