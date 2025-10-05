@@ -1,9 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Zap, Shield, Star, Clock, Target, Rocket, Code2, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useUserStore } from '@/stores/user-store'
-import { mockUserProfile } from '@/lib/mock-user-data'
+import { SignInModal } from '@/components/auth/sign-in-modal'
 
 const features = [
   {
@@ -62,14 +62,17 @@ const techStack = [
 ]
 
 export default function AboutPage() {
-  const { setUser } = useUserStore()
-
-  const handleGetStarted = () => {
-    setUser(mockUserProfile)
-  }
+  const [showSignInModal, setShowSignInModal] = useState(false)
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <>
+      <SignInModal 
+        isOpen={showSignInModal} 
+        onClose={() => setShowSignInModal(false)}
+        trigger="manual"
+      />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Hero Section */}
       <div className="text-center mb-20">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -234,10 +237,10 @@ export default function AboutPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={handleGetStarted}
+            onClick={() => setShowSignInModal(true)}
             className="inline-flex items-center justify-center px-8 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
           >
-            Get Started Free
+            Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </button>
           <Link
@@ -249,5 +252,6 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

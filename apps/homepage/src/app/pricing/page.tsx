@@ -1,9 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Check, X, Zap, Crown, Building2, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useUserStore } from '@/stores/user-store'
-import { mockUserProfile } from '@/lib/mock-user-data'
+import { SignInModal } from '@/components/auth/sign-in-modal'
 
 const plans = [
   {
@@ -99,16 +99,18 @@ const faqs = [
 ]
 
 export default function PricingPage() {
-  const { setUser } = useUserStore()
-
-  const handleGetStarted = () => {
-    // Mock sign-in
-    setUser(mockUserProfile)
-  }
+  const [showSignInModal, setShowSignInModal] = useState(false)
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Hero Section */}
+    <>
+      <SignInModal 
+        isOpen={showSignInModal} 
+        onClose={() => setShowSignInModal(false)}
+        trigger="manual"
+      />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
           Simple, Transparent Pricing
@@ -158,7 +160,7 @@ export default function PricingPage() {
 
               {/* CTA Button */}
               <button
-                onClick={handleGetStarted}
+                onClick={() => setShowSignInModal(true)}
                 className={`w-full py-3 px-6 rounded-lg font-medium transition-colors mb-8 ${
                   plan.highlighted
                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -252,10 +254,10 @@ export default function PricingPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={handleGetStarted}
+            onClick={() => setShowSignInModal(true)}
             className="inline-flex items-center justify-center px-8 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
           >
-            Start Free Trial
+            Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </button>
           <Link
@@ -267,5 +269,6 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

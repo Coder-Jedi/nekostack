@@ -5,6 +5,7 @@ import { ThemeToggle } from './theme-toggle'
 import { LanguageSelector } from './language-selector'
 import { ToolsDropdown } from './tools-dropdown'
 import { ProfileDropdown } from '@/components/dashboard/profile-dropdown'
+import { SignInModal } from '@/components/auth/sign-in-modal'
 import { useUserStore } from '@/stores/user-store'
 import { useAnnouncementsStore } from '@/stores/announcements-store'
 import { CompactAnnouncementBanner } from '@/components/announcements/announcement-banner'
@@ -15,6 +16,7 @@ import { useState, useEffect } from 'react'
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showSignInModal, setShowSignInModal] = useState(false)
   const { user, isAuthenticated, logout } = useUserStore()
   const { 
     announcements, 
@@ -46,6 +48,12 @@ export function Header() {
 
   return (
     <>
+      <SignInModal 
+        isOpen={showSignInModal} 
+        onClose={() => setShowSignInModal(false)}
+        trigger="manual"
+      />
+      
       {/* Top Announcement Banner */}
       {topAnnouncement && (
         <CompactAnnouncementBanner
@@ -185,9 +193,12 @@ export function Header() {
                 <ProfileDropdown user={user} onLogout={logout} />
               </div>
             ) : (
-              <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10">
+              <button 
+                onClick={() => setShowSignInModal(true)}
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+              >
                 <User className="h-[1.2rem] w-[1.2rem]" />
-                <span className="sr-only">User menu</span>
+                <span className="sr-only">Sign in</span>
               </button>
             )}
 
