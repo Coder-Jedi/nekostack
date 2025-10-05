@@ -82,25 +82,54 @@
 
 ## 🎯 Phase 4B: Backend Integration (Week 11-12)
 
+### Architecture Decision: Hybrid Approach ✅
+**Selected Stack:**
+- **Auth & User Data**: Supabase Auth + PostgreSQL
+- **App Data**: Cloudflare D1 (tool metadata, analytics)
+- **Tools Processing**: Cloudflare Workers + Oracle Containers
+- **File Storage**: Supabase Storage
+
+**Why Hybrid?**
+- Fast MVP: 2-3 days to implement auth (vs 2-3 weeks custom)
+- Cost: FREE for MVP (Supabase free tier)
+- Scale: $130/month at 50k-500k users (vs $105 pure Cloudflare)
+- Migration: Can move to Workers + D1 later if needed
+
+**📖 Full Details**: See [HYBRID_ARCHITECTURE.md](./HYBRID_ARCHITECTURE.md) for complete architecture documentation
+
 ### 1. Database Setup
-**Options:**
-- Cloudflare D1 (as planned)
-- PostgreSQL with Prisma
-- Supabase
+**Primary Database: Supabase PostgreSQL**
+- User profiles and authentication
+- User preferences and settings
+- Subscription and billing data
+- Favorites and saved items
+
+**Secondary Database: Cloudflare D1**
+- Tool metadata and configurations
+- Usage analytics and metrics
+- Public tool ratings and reviews
+- Cache for frequently accessed data
 
 **Tasks:**
-- [ ] Choose and set up database
-- [ ] Design schema for users, tools, analytics
-- [ ] Create migration files
-- [ ] Set up database client
+- [ ] Set up Supabase project
+- [ ] Design user schema (users, profiles, subscriptions)
+- [ ] Set up Cloudflare D1 database
+- [ ] Design app schema (tools, analytics, reviews)
+- [ ] Create migration files for both databases
+- [ ] Set up database clients (Supabase JS + D1 client)
 
 ### 2. Authentication System
-**Using NextAuth.js (already installed)**
+**Using Supabase Auth + NextAuth.js**
+- [ ] Install and configure Supabase client
+- [ ] Set up NextAuth.js with Supabase adapter
 - [ ] Configure auth providers (Google, GitHub, Email)
-- [ ] Set up session management
+- [ ] Set up session management with JWT
 - [ ] Create user registration flow
-- [ ] Implement protected routes
+- [ ] Implement protected routes and middleware
 - [ ] Add role-based access control
+- [ ] Set up email verification
+- [ ] Configure row-level security (RLS) in Supabase
+- [ ] Create Next.js API routes for auth endpoints
 
 ### 3. API Routes
 **Create API endpoints:**

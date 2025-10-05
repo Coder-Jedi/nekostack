@@ -22,17 +22,21 @@
 - **Queue-based architecture** using Oracle Streaming for task decoupling
 
 ### **Database & Storage Layer**
-- **Cloudflare D1** (SQLite at the edge) for primary data storage
-- **Cloudflare KV Storage** for caching and session management
+- **Supabase PostgreSQL** for user data, sessions, and authentication (MVP Phase)
+- **Cloudflare D1** (SQLite at the edge) for application data, analytics, and tool metadata
+- **Cloudflare KV Storage** for caching and temporary data
 - **Oracle Object Storage** for temporary file storage during processing
+- **Supabase Storage** for user-uploaded files and persistent storage
 - **Global replication** with eventual consistency
 - **SQL compatibility** for complex queries and relationships
 
 ### **Authentication & Security**
-- **Cloudflare Access** for enterprise-grade authentication
-- **JWT-based sessions** stored in KV storage
-- **OAuth integration** (Google, GitHub, email)
-- **Row-level security** implemented in Workers
+- **Supabase Auth** for enterprise-grade authentication (MVP Phase)
+- **Next.js API Routes** for auth endpoints with NextAuth.js
+- **JWT-based sessions** with secure HTTP-only cookies
+- **OAuth integration** (Google, GitHub, email) via Supabase
+- **Row-level security** with Supabase policies
+- **Migration path** to Cloudflare Workers + D1 for auth at scale
 
 ### **Styling & UI Framework**
 - **Tailwind CSS** for utility-first styling
@@ -58,10 +62,12 @@
 - **Real-time monitoring** with alerting
 - **Core Web Vitals** tracking for SEO optimization
 
-## Hybrid Architecture: Cloudflare + Oracle Cloud Integration
+## Hybrid Architecture: Next.js + Cloudflare + Oracle Cloud Integration
 
-### **Compute Task Distribution**
-- **Cloudflare Workers**: Authentication, routing, caching, simple conversions
+### **Compute & Service Distribution**
+- **Next.js API Routes**: Authentication, user management, session handling
+- **Supabase**: User database, auth providers, file storage, real-time subscriptions
+- **Cloudflare Workers**: Tool routing, caching, simple conversions, analytics
 - **Oracle Container Instances**: Image processing, PDF generation, AI analysis, complex computations
 
 ### **Compute-Intensive Tasks Requiring Oracle Containers**
@@ -73,9 +79,11 @@
 
 ### **Request Flow Architecture**
 ```
-User Request → Cloudflare Workers (Router) → Decision Logic:
-├── Light Tasks → Process in Workers (< 10ms)
-└── Heavy Tasks → Oracle Streaming Queue → Oracle Container Instances → Oracle Object Storage → Response
+User Request → Next.js Frontend → Decision Logic:
+├── Auth Requests → Next.js API Routes → Supabase Auth
+├── User Data → Next.js API Routes → Supabase PostgreSQL
+├── Light Tool Tasks → Cloudflare Workers (< 10ms)
+└── Heavy Tool Tasks → Oracle Streaming Queue → Oracle Container Instances → Oracle Object Storage → Response
 ```
 
 ## Cost Structure & Scaling
@@ -86,9 +94,10 @@ User Request → Cloudflare Workers (Router) → Decision Logic:
 - **D1 Database**: Free tier
 - **KV Storage**: Free tier
 - **Images**: $5/month
+- **Supabase**: Free tier (50k users, 500MB database, 1GB storage)
 - **Oracle Container Instances**: $10/month (Always Free tier + light usage)
 - **Oracle Object Storage + Streaming**: $3/month
-- **Total Monthly Cost**: $18
+- **Total Monthly Cost**: $18 (Supabase free tier)
 
 ### **Phase 2: Growth (50k-500k monthly users)**
 - **Cloudflare Pages**: $20/month
@@ -96,9 +105,10 @@ User Request → Cloudflare Workers (Router) → Decision Logic:
 - **D1 Database**: $5/month
 - **KV Storage**: $5/month
 - **Images**: $10/month
+- **Supabase Pro**: $25/month (100k users, 8GB database, 100GB storage)
 - **Oracle Container Instances**: $50/month
 - **Oracle Object Storage + Streaming**: $10/month
-- **Total Monthly Cost**: $105
+- **Total Monthly Cost**: $130
 
 ### **Phase 3: Scale (500k+ monthly users)**
 - **Cloudflare Pages**: $20/month
@@ -106,9 +116,11 @@ User Request → Cloudflare Workers (Router) → Decision Logic:
 - **D1 Database**: $15/month
 - **KV Storage**: $10/month
 - **Images**: $25/month
+- **Supabase Pro**: $25/month + usage ($0.125/GB database, $0.021/GB bandwidth)
+- **Estimated Supabase**: $75/month (with usage)
 - **Oracle Container Instances**: $150/month
 - **Oracle Object Storage + Streaming**: $25/month
-- **Total Monthly Cost**: $270
+- **Total Monthly Cost**: $345
 
 ## Performance Targets
 
@@ -191,12 +203,98 @@ User Request → Cloudflare Workers (Router) → Decision Logic:
 ### **PRD Feature Mapping**
 - **Tool Grid Display**: Static generation with ISR for updates
 - **Search & Filter**: Client-side filtering with KV cache
-- **User Authentication**: Cloudflare Access + JWT sessions
-- **Usage Dashboard**: D1 database with real-time KV updates
+- **User Authentication**: Supabase Auth + NextAuth.js via Next.js API Routes
+- **User Management**: Supabase PostgreSQL with row-level security
+- **Usage Dashboard**: D1 database for analytics + Supabase for user data
+- **File Storage**: Supabase Storage for user uploads
 - **Responsive Design**: Tailwind CSS responsive utilities
 - **Theme Toggle**: System preference detection with persistence
 - **Analytics Tracking**: Custom Workers for event collection
 - **Performance Optimization**: Edge computing and global CDN
+
+## Hybrid Approach: MVP to Scale Migration Strategy
+
+### **Why Hybrid Architecture?**
+
+The hybrid approach combines the best of both worlds:
+1. **Fast MVP Development**: Supabase provides auth + database + storage in one platform
+2. **Cost Efficiency**: Free tier for MVP, predictable scaling costs
+3. **Future Flexibility**: Can migrate to pure Cloudflare + D1 at scale
+4. **Proven Technology**: Supabase powers millions of users in production
+
+### **Phase-Based Implementation**
+
+#### **Phase 1: MVP (Current)**
+```
+Auth: Supabase Auth + NextAuth.js
+User Data: Supabase PostgreSQL
+App Data: Cloudflare D1 (tool metadata, analytics)
+Tools: Cloudflare Workers + Oracle Containers
+```
+
+**Benefits:**
+- 2-3 days to implement auth (vs 2-3 weeks custom)
+- Free tier supports 50k users
+- Built-in security, OAuth, email verification
+- Real-time subscriptions for live updates
+
+#### **Phase 2: Growth (50k-500k users)**
+```
+Same as Phase 1, but with:
+- Supabase Pro plan ($25/month)
+- Optimized queries and indexes
+- Database connection pooling
+- CDN caching for static data
+```
+
+**Benefits:**
+- Proven scalability
+- Minimal code changes
+- Predictable costs ($130/month)
+
+#### **Phase 3: Scale (Optional Migration)**
+```
+Option A: Keep Supabase (Recommended if working well)
+Option B: Migrate to Cloudflare Workers + D1
+```
+
+**Migration Path (if needed):**
+1. Implement auth in Workers + D1
+2. Run both systems in parallel
+3. Gradually migrate users
+4. Deprecate Supabase
+
+**Cost Comparison:**
+- Keep Supabase: $345/month
+- Migrate to Workers: $270/month
+- **Savings: $75/month** (only worth it at very high scale)
+
+### **Data Separation Strategy**
+
+**Supabase (User-Centric Data):**
+- User profiles and authentication
+- User preferences and settings
+- Subscription and billing data
+- User-uploaded files
+- Favorites and saved items
+
+**Cloudflare D1 (Application Data):**
+- Tool metadata and configurations
+- Usage analytics and metrics
+- Public tool ratings and reviews
+- Cache for frequently accessed data
+- System-wide settings
+
+**Oracle Containers (Processing):**
+- Image processing results
+- PDF generation
+- AI/ML analysis
+- Temporary file storage
+
+This separation ensures:
+- Auth is fast and reliable (Supabase)
+- Tools are edge-distributed (Workers)
+- Heavy processing is scalable (Oracle)
 
 ## Hybrid Architecture Benefits
 

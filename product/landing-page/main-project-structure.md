@@ -1,5 +1,28 @@
 # NekoStack Monorepo Project Structure
 
+## Hybrid Architecture Overview
+
+**Backend Strategy:**
+- **Authentication & User Data**: Supabase Auth + PostgreSQL
+- **Application Data**: Cloudflare D1 (tool metadata, analytics)
+- **Tool Processing**: Cloudflare Workers (light) + Oracle Containers (heavy)
+- **File Storage**: Supabase Storage (user files) + Oracle Object Storage (processing)
+
+**Why Hybrid?**
+- Fast MVP development (2-3 days for auth)
+- Cost-effective ($0 for MVP, $130/month at 50k-500k users)
+- Proven scalability (Supabase powers millions of users)
+- Migration path to pure edge computing if needed
+
+**Data Flow:**
+```
+User Request → Next.js Frontend
+├── Auth/User → Next.js API → Supabase
+├── App Data → Cloudflare Workers → D1
+├── Light Tools → Cloudflare Workers
+└── Heavy Tools → Oracle Queue → Oracle Containers
+```
+
 ## Root Level Architecture
 
 ```
@@ -49,7 +72,10 @@ apps/homepage/
 │   │   │   ├── tools/              # Tools listing
 │   │   │   ├── profile/            # User profile
 │   │   │   └── settings/           # User settings
-│   │   ├── api/                    # API routes (proxy to Workers)
+│   │   ├── api/                    # API routes
+│   │   │   ├── auth/               # NextAuth.js endpoints (Supabase)
+│   │   │   ├── users/              # User management endpoints
+│   │   │   └── proxy/              # Proxy to Workers/Containers
 │   │   ├── globals.css             # Global styles
 │   │   ├── layout.tsx              # Root layout
 │   │   └── page.tsx                # Landing page
@@ -77,18 +103,19 @@ services/workers/
 │   ├── src/
 │   │   ├── index.ts                # Main worker entry
 │   │   ├── routes/                 # API route handlers
-│   │   ├── middleware/             # Authentication, CORS, etc.
+│   │   ├── middleware/             # CORS, rate limiting, etc.
 │   │   └── utils/                  # Worker utilities
 │   ├── wrangler.toml               # Worker configuration
 │   └── package.json
-├── auth-service/                   # Authentication worker
+├── tool-router/                    # Tool request routing (light tasks)
 ├── analytics-service/              # Analytics collection
 ├── notification-service/           # Real-time notifications
 └── shared/                         # Shared worker utilities
     ├── database/                   # D1 database helpers
     ├── kv/                         # KV storage helpers
-    ├── auth/                       # JWT utilities
     └── types/                      # Shared types
+
+Note: Authentication moved to Next.js API Routes + Supabase (hybrid approach)
 ```
 
 **Oracle Container Instances (`/services/containers`)**
