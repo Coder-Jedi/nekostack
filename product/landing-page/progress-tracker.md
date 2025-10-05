@@ -218,3 +218,26 @@
 - Clean separation between marketing view and authenticated dashboard
 
 **Status**: ✅ Phase 4A Complete - Frontend 100% production-ready, Backend integration next
+
+**2025-10-05 - Architecture Decision & Supabase Setup (Phase 4B Start)**
+- Analyzed tech stack from scalability and cost perspectives - `product/landing-page/tech-stack-discussion.md`
+- Decided on hybrid architecture: Supabase + Cloudflare + Oracle - `HYBRID_ARCHITECTURE.md`
+- Created comprehensive architecture documentation with cost analysis and migration path
+- Updated all architecture documents to reflect hybrid approach
+- Created architecture update summary for quick reference - `ARCHITECTURE_UPDATE_SUMMARY.md`
+- Updated project structure with Next.js API routes for auth - `product/landing-page/main-project-structure.md`
+- Updated NEXT_STEPS.md with hybrid implementation plan
+- Installed Supabase dependencies: @supabase/supabase-js, @supabase/ssr
+- Installed NextAuth.js dependencies: next-auth, @auth/supabase-adapter
+- Created Supabase client utilities for browser, server, and middleware
+- Created middleware.ts for session refresh on every request
+- Created comprehensive database schema with 7 tables and RLS policies - `src/lib/supabase/schema.sql`
+- Designed user-centric schema: profiles, preferences, subscriptions, usage, favorites, files, activity
+- Implemented Row Level Security (RLS) policies for all tables
+- Created automatic profile creation trigger on user signup
+- Set up environment variables template with Supabase and NextAuth config - `.env.example`
+- Created detailed Supabase setup guide with step-by-step instructions - `SUPABASE_SETUP.md`
+- Documented storage bucket setup for avatars, documents, and exports
+- Added OAuth provider configuration guide (Google, GitHub)
+
+**Status**: ⏳ Phase 4B In Progress - Supabase foundation complete, NextAuth.js integration next

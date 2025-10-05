@@ -111,25 +111,36 @@
 - Cache for frequently accessed data
 
 **Tasks:**
-- [ ] Set up Supabase project
-- [ ] Design user schema (users, profiles, subscriptions)
-- [ ] Set up Cloudflare D1 database
+- [x] Install Supabase dependencies (@supabase/supabase-js, @supabase/ssr)
+- [x] Create Supabase client utilities (browser, server, middleware)
+- [x] Design user schema with 7 tables (see schema.sql)
+- [x] Implement Row Level Security (RLS) policies
+- [x] Create automatic profile creation trigger
+- [x] Set up environment variables template
+- [x] Create Supabase setup guide (SUPABASE_SETUP.md)
+- [ ] Create Supabase project (manual step - follow SUPABASE_SETUP.md)
+- [ ] Run schema.sql in Supabase dashboard
+- [ ] Create storage buckets (avatars, documents, exports)
+- [ ] Set up Cloudflare D1 database (later phase)
 - [ ] Design app schema (tools, analytics, reviews)
-- [ ] Create migration files for both databases
-- [ ] Set up database clients (Supabase JS + D1 client)
+- [ ] Create migration files for D1
 
 ### 2. Authentication System
 **Using Supabase Auth + NextAuth.js**
-- [ ] Install and configure Supabase client
-- [ ] Set up NextAuth.js with Supabase adapter
-- [ ] Configure auth providers (Google, GitHub, Email)
+- [x] Install Supabase client (@supabase/supabase-js, @supabase/ssr)
+- [x] Install NextAuth.js (next-auth, @auth/supabase-adapter)
+- [x] Create Supabase client utilities
+- [x] Set up middleware for session refresh
+- [x] Configure row-level security (RLS) in schema
+- [ ] Configure NextAuth.js with Supabase adapter
+- [ ] Create Next.js API routes for auth (/api/auth/[...nextauth])
+- [ ] Configure auth providers (Email, Google, GitHub)
 - [ ] Set up session management with JWT
-- [ ] Create user registration flow
-- [ ] Implement protected routes and middleware
+- [ ] Create sign-in/sign-up UI components
+- [ ] Implement protected routes logic
 - [ ] Add role-based access control
-- [ ] Set up email verification
-- [ ] Configure row-level security (RLS) in Supabase
-- [ ] Create Next.js API routes for auth endpoints
+- [ ] Set up email verification templates
+- [ ] Test complete auth flow
 
 ### 3. API Routes
 **Create API endpoints:**
