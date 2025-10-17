@@ -130,10 +130,13 @@ export default function Home() {
           <div className="text-center mt-8">
             <Link 
               href="/tools"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8"
+              className="group inline-flex items-center justify-center rounded-lg text-sm font-semibold ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-2 border-primary/20 bg-background hover:bg-primary/5 hover:border-primary/40 hover:scale-105 hover:shadow-md h-12 px-8 relative overflow-hidden"
             >
-              View All Tools
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <span className="relative z-10 flex items-center">
+                View All Tools
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </div>
         </section>
@@ -160,10 +163,13 @@ export default function Home() {
           <div className="flex justify-center">
             <Link 
               href="/tools" 
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
+              className="group inline-flex items-center justify-center rounded-lg text-base font-semibold ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-lg h-14 px-10 relative overflow-hidden"
             >
-              Explore Tools
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <span className="relative z-10 flex items-center">
+                Explore Tools
+                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </div>
         </div>
@@ -183,10 +189,13 @@ export default function Home() {
         <div className="text-center mt-8">
           <Link 
             href="/tools"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 px-8"
+            className="group inline-flex items-center justify-center rounded-lg text-sm font-semibold ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-2 border-primary/20 bg-background hover:bg-primary/5 hover:border-primary/40 hover:scale-105 hover:shadow-md h-12 px-8 relative overflow-hidden"
           >
-            View All Tools
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <span className="relative z-10 flex items-center">
+              View All Tools
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
         </div>
       </section>
@@ -201,34 +210,42 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="tool-card p-6 text-center">
-            <Zap className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">Lightning Fast</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="group tool-card p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg border border-border/50 hover:border-primary/20 bg-card/50 hover:bg-card backdrop-blur-sm rounded-xl">
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              <Zap className="h-12 w-12 text-primary mx-auto mb-4 group-hover:text-primary/80" />
+            </div>
+            <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Lightning Fast</h3>
+            <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">
               Optimized for speed with edge computing and smart caching.
             </p>
           </div>
           
-          <div className="tool-card p-6 text-center">
-            <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">Secure & Private</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="group tool-card p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg border border-border/50 hover:border-primary/20 bg-card/50 hover:bg-card backdrop-blur-sm rounded-xl">
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              <Shield className="h-12 w-12 text-primary mx-auto mb-4 group-hover:text-primary/80" />
+            </div>
+            <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Secure & Private</h3>
+            <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">
               Your data is protected with enterprise-grade security.
             </p>
           </div>
           
-          <div className="tool-card p-6 text-center">
-            <Star className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">Premium Quality</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="group tool-card p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg border border-border/50 hover:border-primary/20 bg-card/50 hover:bg-card backdrop-blur-sm rounded-xl">
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              <Star className="h-12 w-12 text-primary mx-auto mb-4 group-hover:text-primary/80" />
+            </div>
+            <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Premium Quality</h3>
+            <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">
               Professional-grade tools with attention to detail.
             </p>
           </div>
           
-          <div className="tool-card p-6 text-center">
-            <Clock className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">Always Available</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="group tool-card p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg border border-border/50 hover:border-primary/20 bg-card/50 hover:bg-card backdrop-blur-sm rounded-xl">
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              <Clock className="h-12 w-12 text-primary mx-auto mb-4 group-hover:text-primary/80" />
+            </div>
+            <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors duration-300">Always Available</h3>
+            <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">
               99.9% uptime with global CDN and redundancy.
             </p>
           </div>
@@ -236,19 +253,29 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 text-center">
-        <div className="bg-muted rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-4">Ready to boost your productivity?</h2>
-          <p className="text-muted-foreground mb-6">
-            Join thousands of users who trust NekoStack for their daily workflows.
-          </p>
-          <Link 
-            href="/tools"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
-          >
-            Explore Tools
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
+      <section className="py-16 text-center">
+        <div className="group bg-gradient-to-br from-muted/50 to-muted/30 backdrop-blur-sm rounded-2xl p-12 border border-border/50 hover:border-primary/20 transition-all duration-500 hover:shadow-xl relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold mb-4 group-hover:text-primary transition-colors duration-300">
+              Ready to boost your productivity?
+            </h2>
+            <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto group-hover:text-foreground/80 transition-colors duration-300">
+              Join thousands of users who trust NekoStack for their daily workflows.
+            </p>
+            <Link 
+              href="/tools"
+              className="group/btn inline-flex items-center justify-center rounded-lg text-base font-semibold ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-lg h-14 px-10 relative overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center">
+                Explore Tools
+                <ArrowRight className="ml-3 h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

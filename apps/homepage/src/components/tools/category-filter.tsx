@@ -103,8 +103,8 @@ export function FilterChips({ selectedCategories, categories, onRemoveCategory, 
   if (selectedCategories.length === 0) return null
 
   return (
-    <div className="flex flex-wrap gap-2 items-center">
-      <span className="text-sm text-muted-foreground">Filters:</span>
+    <div className="flex flex-wrap gap-3 items-center">
+      <span className="text-sm font-medium text-foreground">Active filters:</span>
       {selectedCategories.map((categoryId) => {
         const category = categories.find(c => c.id === categoryId)
         if (!category) return null
@@ -113,19 +113,20 @@ export function FilterChips({ selectedCategories, categories, onRemoveCategory, 
           <button
             key={categoryId}
             onClick={() => onRemoveCategory(categoryId)}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full hover:bg-primary/20 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/15 text-primary text-sm font-medium rounded-full hover:bg-primary/25 transition-all duration-200 hover:scale-105 border border-primary/20"
+            title={`Remove ${category.name} filter`}
           >
             {category.name}
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3 hover:scale-110 transition-transform" />
           </button>
         )
       })}
       {selectedCategories.length > 1 && (
         <button
           onClick={onClearAll}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors underline hover:no-underline font-medium"
         >
-          Clear all
+          Clear all filters
         </button>
       )}
     </div>
