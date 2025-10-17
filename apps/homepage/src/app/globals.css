@@ -76,15 +76,78 @@
   }
   
   .dashboard-header {
-    background-color: hsl(var(--background) / 0.95);
+    background-color: hsl(var(--background));
     backdrop-filter: blur(8px);
-    border-bottom-width: 1px;
+    border-bottom: 1px solid hsl(var(--border));
   }
   
   @supports (backdrop-filter: blur(8px)) {
     .dashboard-header {
+      background-color: hsl(var(--background) / 0.8);
+    }
+  }
+  
+  /* Light mode specific fixes */
+  .light .dashboard-header {
+    background-color: hsl(var(--background) / 0.95);
+    border-bottom-color: hsl(var(--border) / 0.5);
+  }
+  
+  @supports (backdrop-filter: blur(8px)) {
+    .light .dashboard-header {
+      background-color: hsl(var(--background) / 0.7);
+    }
+  }
+  
+  /* Dark mode specific fixes */
+  .dark .dashboard-header {
+    background-color: hsl(var(--background) / 0.8);
+    border-bottom-color: hsl(var(--border) / 0.3);
+  }
+  
+  @supports (backdrop-filter: blur(8px)) {
+    .dark .dashboard-header {
       background-color: hsl(var(--background) / 0.6);
     }
+  }
+  
+  /* Ensure proper text colors in header */
+  .dashboard-header {
+    color: hsl(var(--foreground));
+  }
+  
+  .dashboard-header a {
+    color: hsl(var(--foreground));
+  }
+  
+  .dashboard-header a:hover {
+    color: hsl(var(--primary));
+  }
+  
+  /* Fix for light mode header text visibility */
+  .light .dashboard-header {
+    color: hsl(var(--foreground));
+  }
+  
+  .light .dashboard-header a {
+    color: hsl(var(--foreground));
+  }
+  
+  .light .dashboard-header a:hover {
+    color: hsl(var(--primary));
+  }
+  
+  /* Fix for dark mode header text visibility */
+  .dark .dashboard-header {
+    color: hsl(var(--foreground));
+  }
+  
+  .dark .dashboard-header a {
+    color: hsl(var(--foreground));
+  }
+  
+  .dark .dashboard-header a:hover {
+    color: hsl(var(--primary));
   }
   
   .search-input {
