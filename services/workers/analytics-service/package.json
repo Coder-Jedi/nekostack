@@ -1,0 +1,23 @@
+{
+  "name": "analytics-service",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "build": "tsc",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.45.0"
+  },
+  "dependencies": {
+    "@nekostack/workers-shared": "*"
+  }
+}

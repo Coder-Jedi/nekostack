@@ -2,5 +2,68 @@ name = "nekostack-api-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "nekostack-production"
+database_id = "9a6dd95a-527d-4434-b66b-6726cf4b5223"
+
+# KV Storage binding
+[[kv_namespaces]]
+binding = "CACHE"
+id = "069686fa17cb4d479f03ec702683f178"
+
+# Environment variables
 [env.production]
-vars = { ENVIRONMENT = "production" }
+vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://nekostack.com,https://www.nekostack.com,https://api-gateway.nekostack.com,https://api-tools.nekostack.com,https://api-analytics.nekostack.com,https://api-notifications.nekostack.com", CORS_CREDENTIALS = "false" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "nekostack-production"
+database_id = "9a6dd95a-527d-4434-b66b-6726cf4b5223"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "069686fa17cb4d479f03ec702683f178"
+
+# Custom domain for production
+[[env.production.custom_domains]]
+domain = "api-gateway.nekostack.com"
+
+[env.staging]
+vars = { ENVIRONMENT = "staging", ALLOWED_ORIGINS = "https://staging.nekostack.com", CORS_CREDENTIALS = "false" }
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "nekostack-staging"
+database_id = "dcdfc450-cc10-4b17-bd17-32fbd56e0889"
+
+[[env.staging.kv_namespaces]]
+binding = "CACHE"
+id = "069686fa17cb4d479f03ec702683f178"
+
+[env.development]
+vars = { ENVIRONMENT = "development", ALLOWED_ORIGINS = "*", CORS_CREDENTIALS = "false" }
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "nekostack-development"
+database_id = "5596323d-6c04-4a32-b991-2a6464f0cf76"
+
+[[env.development.kv_namespaces]]
+binding = "CACHE"
+id = "069686fa17cb4d479f03ec702683f178"
+
+# Routes (for production)
+# routes = [
+#   { pattern = "api.nekostack.com/*", custom_domain = true }
+# ]
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Development configuration
+[dev]
+port = 8787
+local_protocol = "http"

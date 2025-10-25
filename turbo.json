@@ -17,6 +17,12 @@
     },
     "deploy": {
       "dependsOn": ["build", "lint"]
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
     }
   }
 }

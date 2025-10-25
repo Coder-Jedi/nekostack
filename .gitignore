@@ -93,3 +93,28 @@ docker-compose.prod.yml
 # OS
 .DS_Store
 Thumbs.db
+
+# Cloudflare Workers
+.wrangler/
+**/.wrangler/
+wrangler.toml
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# Environment files
+.env.production
+.env.staging
+.env.development
+production.env.example
+
+# Build artifacts
+*.tsbuildinfo
+
+# Cloudflare Workers build outputs
+**/dist/
+**/wrangler.toml
+
+# Backup files
+*.backup
+*.bak

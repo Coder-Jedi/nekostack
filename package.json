@@ -16,7 +16,11 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo run clean",
-    "deploy": "turbo run deploy"
+    "deploy": "turbo run deploy",
+    "dev:workers": "turbo run dev --filter=@nekostack/workers-*",
+    "deploy:workers": "turbo run deploy --filter=@nekostack/workers-*",
+    "db:migrate": "wrangler d1 migrations apply nekostack-production",
+    "db:seed": "wrangler d1 execute nekostack-production --file=services/workers/shared/database/seeds/categories.sql && wrangler d1 execute nekostack-production --file=services/workers/shared/database/seeds/tools.sql"
   },
   "devDependencies": {
     "turbo": "^1.10.0",
