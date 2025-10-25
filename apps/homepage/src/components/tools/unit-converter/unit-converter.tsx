@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeftRight, Copy, RotateCcw } from 'lucide-react'
 import { CustomSelect } from './custom-select'
+import { analyticsService } from '@/lib/api/services/analytics'
+import { ConversionHistoryItem } from '@/lib/api/types'
 
 interface UnitCategory {
   name: string
@@ -73,7 +75,7 @@ const unitCategories: UnitCategory[] = [
 ]
 
 interface UnitConverterProps {
-  onConversion: (conversion: any) => void
+  onConversion: (conversion: ConversionHistoryItem) => void
 }
 
 export function UnitConverter({ onConversion }: UnitConverterProps) {
@@ -110,15 +112,26 @@ export function UnitConverter({ onConversion }: UnitConverterProps) {
     setTimeout(() => {
       const value = Number(inputValue)
       const convertedValue = convertValue(value, fromUnit, toUnit, currentCategory.name)
+      const resultValue = convertedValue.toFixed(6).replace(/\.?0+$/, '')
       
-      setResult(convertedValue.toFixed(6).replace(/\.?0+$/, ''))
+      setResult(resultValue)
+      
+      // Track analytics (non-blocking)
+      analyticsService.trackConversion('unit-converter', {
+        category: currentCategory.name,
+        fromUnit: currentUnits[fromUnit].symbol,
+        toUnit: currentUnits[toUnit].symbol,
+        inputValue: value,
+        outputValue: parseFloat(resultValue),
+        conversionRate: convertedValue / value
+      })
       
       // Add to history
       onConversion({
         type: 'unit',
         category: currentCategory.name,
         from: `${value} ${currentUnits[fromUnit].symbol}`,
-        to: `${convertedValue.toFixed(6).replace(/\.?0+$/, '')} ${currentUnits[toUnit].symbol}`,
+        to: `${resultValue} ${currentUnits[toUnit].symbol}`,
         timestamp: new Date().toISOString()
       })
       

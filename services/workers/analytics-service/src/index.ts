@@ -60,7 +60,8 @@ export default {
       // Apply middleware
       const middlewareResult = await middleware(context);
       if (middlewareResult.status !== 200) {
-        return middlewareResult;
+        // Apply middleware to response even for rate limit errors to include headers
+        return applyMiddlewareToResponse(middlewareResult, context);
       }
 
       // Handle request with router

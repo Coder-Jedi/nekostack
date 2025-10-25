@@ -281,3 +281,31 @@ async function getExchangeRate(fromCurrency: string, toCurrency: string, date?: 
 
   throw new Error(`Exchange rate not available for ${fromCurrency} to ${toCurrency}`);
 }
+
+// GET /api/tools/unit-converter/currency/list
+export async function getCurrencyList(context: RequestContext): Promise<Response> {
+  const currencies = [
+    { code: 'USD', name: 'US Dollar', symbol: '$' },
+    { code: 'EUR', name: 'Euro', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', symbol: '£' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+    { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+    { code: 'MXN', name: 'Mexican Peso', symbol: '$' },
+    { code: 'KRW', name: 'South Korean Won', symbol: '₩' }
+  ];
+  return createSuccessResponse({ currencies }, context.request_id);
+}
+
+// GET /api/tools/unit-converter/currency/rates
+export async function getCurrencyRates(context: RequestContext): Promise<Response> {
+  return createSuccessResponse({
+    lastUpdated: new Date().toISOString(),
+    source: 'mock-exchange-api',
+    nextUpdate: new Date(Date.now() + 3600000).toISOString()
+  }, context.request_id);
+}

@@ -21,7 +21,8 @@ const DEFAULT_OPTIONS: Required<MiddlewareOptions> = {
   enableAuth: false,
   rateLimitOptions: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    maxRequests: 100
+    maxRequests: 1000 // INCREASED FOR DEVELOPMENT: 1000 requests per 15 minutes (was 100)
+    // TODO: Consider reducing to 100-500 for production if needed for security
   },
   corsOptions: {},
   authOptions: {

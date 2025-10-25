@@ -5,7 +5,7 @@ import { createRouter } from './utils/router';
 import { createPublicMiddleware, applyMiddlewareToResponse } from './middleware/index';
 
 // Import route handlers
-import { convertUnits, convertCurrency, getConversionCategories } from './routes/unit-converter';
+import { convertUnits, convertCurrency, getConversionCategories, getCurrencyList, getCurrencyRates } from './routes/unit-converter';
 import { generateQRCode, generateBulkQRCodes, getSupportedFormats as getQrFormats, getErrorCorrectionLevels } from './routes/qr-generator';
 import { convertMarkdown, getMarkdownJobStatus, getSupportedFormats as getMarkdownFormats } from './routes/markdown-converter';
 
@@ -17,6 +17,8 @@ const router = createRouter();
 router.post('/api/tools/unit-converter', convertUnits);
 router.post('/api/tools/unit-converter/currency', convertCurrency);
 router.get('/api/tools/unit-converter/categories', getConversionCategories);
+router.get('/api/tools/unit-converter/currency/list', getCurrencyList);
+router.get('/api/tools/unit-converter/currency/rates', getCurrencyRates);
 
 // QR Generator routes
 router.post('/api/tools/qr-generator', generateQRCode);
@@ -60,7 +62,8 @@ export default {
       // Apply middleware
       const middlewareResult = await middleware(context);
       if (middlewareResult.status !== 200) {
-        return middlewareResult;
+        // Apply middleware to response even for rate limit errors to include headers
+        return applyMiddlewareToResponse(middlewareResult, context);
       }
 
       // Handle request with router

@@ -39,12 +39,19 @@ export function rateLimitMiddleware(options: Partial<RateLimitOptions> = {}): (c
 
     try {
       // Get current request count for this window
-      const currentCount = await kv.get<number>(windowKey, false) || 0;
+      const currentCount = await kv.get<number>(windowKey, true) || 0;
 
       // Check if limit exceeded
       if (currentCount >= config.maxRequests) {
         const resetTime = windowStart + config.windowMs;
         const retryAfter = Math.ceil((resetTime - now) / 1000);
+
+        // Add rate limit info to context even when limit exceeded
+        context.rateLimitInfo = {
+          limit: config.maxRequests,
+          remaining: 0,
+          reset: resetTime
+        };
 
         return {
           success: false,

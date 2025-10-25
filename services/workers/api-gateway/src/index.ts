@@ -10,6 +10,7 @@ import { getCategories, getCategoryById, getCategoryTools } from './routes/categ
 import { getSystemStatus, getSystemConfig, getSystemConfigValue, getHealthCheck, getSystemMetrics } from './routes/system';
 import { getAnnouncements, getAnnouncementById, getActiveAnnouncements, getAnnouncementsByPriority, getAnnouncementsByAudience } from './routes/announcements';
 import { getChangelog, getChangelogByVersion, getRecentChangelog, getLatestVersion } from './routes/changelog';
+import { getUserHistory, saveUserHistory, clearUserHistory } from './routes/user-history';
 
 // Create router
 const router = createRouter();
@@ -46,6 +47,11 @@ router.get('/api/changelog/latest', getLatestVersion);
 router.get('/api/changelog/recent', getRecentChangelog);
 router.get('/api/changelog/version/:version', getChangelogByVersion);
 
+// User History routes
+router.get('/api/user/conversion-history', getUserHistory);
+router.post('/api/user/conversion-history', saveUserHistory);
+router.delete('/api/user/conversion-history', clearUserHistory);
+
 // CORS preflight
 router.options('*', async () => {
   return new Response(null, {
@@ -77,7 +83,8 @@ export default {
       // Apply middleware
       const middlewareResult = await middleware(context);
       if (middlewareResult.status !== 200) {
-        return middlewareResult;
+        // Apply middleware to response even for rate limit errors to include headers
+        return applyMiddlewareToResponse(middlewareResult, context);
       }
 
       // Handle request with router

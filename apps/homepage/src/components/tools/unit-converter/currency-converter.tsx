@@ -1,36 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ArrowLeftRight, Copy, RotateCcw, RefreshCw, TrendingUp } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { ArrowLeftRight, Copy, RotateCcw, RefreshCw, TrendingUp, AlertCircle } from 'lucide-react'
 import { CustomSelect } from './custom-select'
+import { currencyService } from '@/lib/api/services/currency'
+import { Currency, ConversionHistoryItem } from '@/lib/api/types'
 
-interface Currency {
-  code: string
-  name: string
-  symbol: string
-  rate: number
-}
-
-const currencies: Currency[] = [
-  { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
-  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.85 },
-  { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.73 },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 110 },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.25 },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.35 },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', rate: 0.92 },
-  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', rate: 6.45 },
-  { code: 'INR', name: 'Indian Rupee', symbol: '₹', rate: 74.5 },
-  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', rate: 5.2 },
-  { code: 'MXN', name: 'Mexican Peso', symbol: '$', rate: 20.1 },
-  { code: 'KRW', name: 'South Korean Won', symbol: '₩', rate: 1180 }
+// Fallback currencies for client-side conversion
+const fallbackCurrencies: Currency[] = [
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'GBP', name: 'British Pound', symbol: '£' },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+  { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+  { code: 'MXN', name: 'Mexican Peso', symbol: '$' },
+  { code: 'KRW', name: 'South Korean Won', symbol: '₩' }
 ]
 
+// Module-level variables to track currency loading state globally
+// This persists across component unmounts/remounts
+let globalCurrenciesLoaded = false
+let globalCurrenciesPromise: Promise<Currency[]> | null = null
+
 interface CurrencyConverterProps {
-  onConversion: (conversion: any) => void
+  onConversion: (conversion: ConversionHistoryItem) => void
 }
 
 export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
+  const [currencies, setCurrencies] = useState<Currency[]>(fallbackCurrencies)
   const [fromCurrency, setFromCurrency] = useState(0)
   const [toCurrency, setToCurrency] = useState(1)
   const [inputValue, setInputValue] = useState('')
@@ -38,21 +40,67 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
   const [isConverting, setIsConverting] = useState(false)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [exchangeRate, setExchangeRate] = useState(1)
 
-  const convertCurrency = (amount: number, from: number, to: number) => {
-    // Convert to USD first, then to target currency
-    const usdAmount = amount / currencies[from].rate
-    return usdAmount * currencies[to].rate
+  // Client-side fallback conversion (simplified)
+  const convertCurrencyClientSide = (amount: number, fromCode: string, toCode: string) => {
+    // Mock rates for fallback
+    const mockRates: Record<string, number> = {
+      'USD': 1,
+      'EUR': 0.85,
+      'GBP': 0.73,
+      'JPY': 110,
+      'CAD': 1.25,
+      'AUD': 1.35,
+      'CHF': 0.92,
+      'CNY': 6.45,
+      'INR': 74.5,
+      'BRL': 5.2,
+      'MXN': 20.1,
+      'KRW': 1180
+    }
+    
+    const fromRate = mockRates[fromCode] || 1
+    const toRate = mockRates[toCode] || 1
+    return (amount / fromRate) * toRate
   }
 
-  const handleConvert = () => {
+  const handleConvert = useCallback(async () => {
     if (!inputValue || isNaN(Number(inputValue))) return
 
     setIsConverting(true)
+    setApiError(null)
     
-    setTimeout(() => {
+    try {
       const amount = Number(inputValue)
-      const convertedAmount = convertCurrency(amount, fromCurrency, toCurrency)
+      const fromCode = currencies[fromCurrency].code
+      const toCode = currencies[toCurrency].code
+      
+      let convertedAmount: number
+      let rate: number
+      
+      try {
+        // Try API conversion first
+        const response = await currencyService.convert({
+          amount,
+          fromCurrency: fromCode,
+          toCurrency: toCode
+        })
+        
+        convertedAmount = response.converted.amount
+        rate = response.exchangeRate
+        setExchangeRate(rate)
+        
+      } catch (error) {
+        console.warn('API conversion failed, using client-side fallback:', error)
+        setApiError('Using offline rates - may not be current')
+        
+        // Fallback to client-side conversion
+        convertedAmount = convertCurrencyClientSide(amount, fromCode, toCode)
+        rate = convertCurrencyClientSide(1, fromCode, toCode)
+        setExchangeRate(rate)
+      }
       
       setResult(convertedAmount.toFixed(2))
       
@@ -61,13 +109,17 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
         type: 'currency',
         from: `${currencies[fromCurrency].symbol}${amount} ${currencies[fromCurrency].code}`,
         to: `${currencies[toCurrency].symbol}${convertedAmount.toFixed(2)} ${currencies[toCurrency].code}`,
-        rate: currencies[toCurrency].rate / currencies[fromCurrency].rate,
+        rate,
         timestamp: new Date().toISOString()
       })
       
+    } catch (error) {
+      console.error('Conversion error:', error)
+      setApiError('Conversion failed. Please try again.')
+    } finally {
       setIsConverting(false)
-    }, 300)
-  }
+    }
+  }, [inputValue, fromCurrency, toCurrency, currencies, onConversion])
 
   const handleSwap = () => {
     setFromCurrency(toCurrency)
@@ -87,23 +139,71 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
 
   const handleRefreshRates = async () => {
     setIsRefreshing(true)
+    setApiError(null)
     
-    // Simulate API call to refresh rates
-    setTimeout(() => {
-      // In a real app, this would fetch from an API
+    try {
+      // Only refresh rates, not currency list (list is already loaded on mount)
+      const ratesResponse = await currencyService.refreshRates()
+      setLastUpdated(new Date(ratesResponse.lastUpdated))
+      
+    } catch (error) {
+      console.warn('Failed to refresh rates:', error)
+      setApiError('Failed to refresh rates - using cached data')
       setLastUpdated(new Date())
+    } finally {
       setIsRefreshing(false)
-    }, 1000)
+    }
   }
+
+  // Load currencies on component mount
+  useEffect(() => {
+    const loadCurrencies = async () => {
+      // If already loaded, use cached data
+      if (globalCurrenciesLoaded) {
+        return
+      }
+      
+      // If there's already a pending request, wait for it
+      if (globalCurrenciesPromise) {
+        try {
+          const apiCurrencies = await globalCurrenciesPromise
+          setCurrencies(apiCurrencies)
+        } catch (error) {
+          console.warn('Failed to load currencies from existing API call, using fallback:', error)
+          setCurrencies(fallbackCurrencies)
+        }
+        return
+      }
+      
+      // Start new API call
+      globalCurrenciesPromise = currencyService.getCurrencies()
+      
+      try {
+        const apiCurrencies = await globalCurrenciesPromise
+        setCurrencies(apiCurrencies)
+        globalCurrenciesLoaded = true
+      } catch (error) {
+        console.warn('Failed to load currencies from API, using fallback:', error)
+        setCurrencies(fallbackCurrencies)
+        globalCurrenciesLoaded = true
+      } finally {
+        // Clear the promise so future calls can start fresh
+        globalCurrenciesPromise = null
+      }
+    }
+    
+    loadCurrencies()
+  }, []) // Empty dependency array - only run on mount
 
   // Auto-convert when input changes
   useEffect(() => {
     if (inputValue && !isNaN(Number(inputValue))) {
       handleConvert()
     }
-  }, [inputValue, fromCurrency, toCurrency])
+  }, [inputValue, fromCurrency, toCurrency, handleConvert])
 
-  const exchangeRate = currencies[toCurrency].rate / currencies[fromCurrency].rate
+  // Calculate exchange rate for display
+  const displayExchangeRate = exchangeRate || 1
 
   return (
     <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-8 relative overflow-hidden">
@@ -127,6 +227,12 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
         <div className="text-sm text-muted-foreground">
           Last updated: {lastUpdated.toLocaleTimeString()}
         </div>
+        {apiError && (
+          <div className="mt-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-sm text-yellow-600">
+            <AlertCircle className="h-4 w-4" />
+            {apiError}
+          </div>
+        )}
       </div>
 
       {/* Exchange Rate Display */}
@@ -135,7 +241,7 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
           <div className="flex items-center gap-2 text-sm">
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="font-medium">
-              1 {currencies[fromCurrency].code} = {exchangeRate.toFixed(4)} {currencies[toCurrency].code}
+              1 {currencies[fromCurrency].code} = {displayExchangeRate.toFixed(4)} {currencies[toCurrency].code}
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
