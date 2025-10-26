@@ -3,8 +3,10 @@
 export interface Env {
   DB: any; // D1Database
   CACHE: any; // KVNamespace
+  ANALYTICS_SERVICE?: any; // Service binding for analytics-service
   ORACLE_QUEUE_URL?: string;
   ORACLE_API_KEY?: string;
+  FOREXRATE_API_KEY?: string;
   ENVIRONMENT?: string;
   ANALYTICS_RETENTION_DAYS?: string;
   REAL_TIME_AGGREGATION?: string;

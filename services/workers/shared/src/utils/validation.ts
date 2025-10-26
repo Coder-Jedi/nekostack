@@ -63,9 +63,9 @@ export const requestSchemas = {
   // Analytics requests
   trackEvent: z.object({
     event_type: schemas.eventType,
-    tool_id: schemas.toolId.optional(),
+    tool_id: z.string().optional(),
     metadata: z.record(z.any()).optional(),
-    user_id: schemas.userId
+    user_id: schemas.userId.optional()
   }),
   
   getAnalytics: z.object({

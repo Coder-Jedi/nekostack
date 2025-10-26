@@ -50,6 +50,41 @@ const middleware = createPublicMiddleware();
 // Main worker handler
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Check for manual forex rate refresh trigger
+    const url = new URL(request.url);
+    if (url.pathname === '/api/admin/refresh-rates' && request.method === 'POST') {
+      try {
+        const context: RequestContext = {
+          request,
+          env,
+          ctx,
+          request_id: generateRequestId()
+        };
+        
+        // Import and call updateForexRatesFromAPI
+        const { updateForexRatesFromAPI } = await import('./services/forex-service');
+        await updateForexRatesFromAPI(context);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Forex rates refreshed successfully',
+          timestamp: new Date().toISOString()
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        console.error('Manual rate refresh failed:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     try {
       // Create request context
       const context: RequestContext = {
@@ -90,6 +125,28 @@ export default {
           'Access-Control-Allow-Origin': '*'
         }
       });
+    }
+  },
+
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    console.log('Cron triggered at:', new Date(event.scheduledTime).toISOString());
+    
+    try {
+      const context: RequestContext = {
+        request: new Request('https://internal/cron'),
+        env,
+        ctx,
+        request_id: `cron-${Date.now()}`
+      };
+      
+      // Import and call updateForexRatesFromAPI
+      const { updateForexRatesFromAPI } = await import('./services/forex-service');
+      await updateForexRatesFromAPI(context);
+      
+      console.log('Forex rates updated successfully');
+    } catch (error) {
+      console.error('Cron job failed:', error);
+      // Don't throw - let existing cache continue to serve
     }
   }
 };

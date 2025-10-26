@@ -7,6 +7,7 @@ import {
   createErrorResponse 
 } from '../../../shared/src/utils/response';
 import { validateBody, requestSchemas } from '../../../shared/src/utils/validation';
+import { getExchangeRate, getForexMetadata } from '../services/forex-service';
 
 // POST /api/tools/unit-converter - Convert units
 export async function convertUnits(context: RequestContext): Promise<Response> {
@@ -52,12 +53,12 @@ export async function convertCurrency(context: RequestContext): Promise<Response
       return createBadRequestResponse('Invalid request data');
     }
 
-    const { amount, fromCurrency, toCurrency, date } = validation.data;
+    const { amount, fromCurrency, toCurrency } = validation.data;
     
-    // Get exchange rate
-    const exchangeRate = await getExchangeRate(fromCurrency, toCurrency, date);
+    // Get exchange rate using forex service
+    const rateData = await getExchangeRate(fromCurrency, toCurrency, context);
     
-    const convertedAmount = amount * exchangeRate;
+    const convertedAmount = amount * rateData.rate;
     
     return createSuccessResponse({
       original: {
@@ -68,12 +69,36 @@ export async function convertCurrency(context: RequestContext): Promise<Response
         amount: Math.round(convertedAmount * 100) / 100,
         currency: toCurrency
       },
-      exchangeRate,
-      date: date || new Date().toISOString(),
+      exchangeRate: rateData.rate,
+      source: rateData.source,
+      isExpired: rateData.isExpired,
+      lastUpdated: rateData.lastUpdated,
       timestamp: new Date().toISOString()
     }, context.request_id);
   } catch (error) {
     console.error('Currency converter error:', error);
+    
+    // If no cache available, return 503
+    if (error instanceof Error && error.message.includes('No forex rates available')) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: {
+          code: 'SERVICE_UNAVAILABLE',
+          message: 'Currency conversion service temporarily unavailable. Please try again later.'
+        },
+        meta: {
+          timestamp: new Date().toISOString(),
+          requestId: context.request_id
+        }
+      }), {
+        status: 503,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': '3600'
+        }
+      });
+    }
+    
     return createErrorResponse('Currency conversion failed', 'CURRENCY_ERROR', 500, context.request_id);
   }
 }
@@ -243,69 +268,195 @@ function convertTemperature(value: number, fromUnit: string, toUnit: string): { 
   };
 }
 
-// Helper function to get exchange rate (mock implementation)
-async function getExchangeRate(fromCurrency: string, toCurrency: string, date?: string): Promise<number> {
-  // In production, this would call a real currency API
-  // For now, return mock rates
-  const mockRates: Record<string, Record<string, number>> = {
-    USD: {
-      EUR: 0.85,
-      GBP: 0.73,
-      JPY: 110.0,
-      CAD: 1.25,
-      AUD: 1.35
-    },
-    EUR: {
-      USD: 1.18,
-      GBP: 0.86,
-      JPY: 129.0,
-      CAD: 1.47,
-      AUD: 1.59
-    }
-  };
-
-  if (fromCurrency === toCurrency) {
-    return 1;
-  }
-
-  const rate = mockRates[fromCurrency]?.[toCurrency];
-  if (rate) {
-    return rate;
-  }
-
-  // If direct rate not available, try reverse rate
-  const reverseRate = mockRates[toCurrency]?.[fromCurrency];
-  if (reverseRate) {
-    return 1 / reverseRate;
-  }
-
-  throw new Error(`Exchange rate not available for ${fromCurrency} to ${toCurrency}`);
-}
-
 // GET /api/tools/unit-converter/currency/list
 export async function getCurrencyList(context: RequestContext): Promise<Response> {
   const currencies = [
-    { code: 'USD', name: 'US Dollar', symbol: '$' },
-    { code: 'EUR', name: 'Euro', symbol: '€' },
-    { code: 'GBP', name: 'British Pound', symbol: '£' },
-    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+    // Fiat Currencies (Alphabetical Order)
+    { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+    { code: 'AFN', name: 'Afghan Afghani', symbol: '؋' },
+    { code: 'ALL', name: 'Albanian Lek', symbol: 'L' },
+    { code: 'AMD', name: 'Armenian Dram', symbol: '֏' },
+    { code: 'ANG', name: 'Netherlands Antillean Guilder', symbol: 'ƒ' },
+    { code: 'AOA', name: 'Angolan Kwanza', symbol: 'Kz' },
+    { code: 'ARS', name: 'Argentine Peso', symbol: '$' },
     { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
-    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
-    { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
-    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'AZN', name: 'Azerbaijan Manat', symbol: '₼' },
+    { code: 'BAM', name: 'Bosnia And Herzegovina Convertible Mark', symbol: 'КМ' },
+    { code: 'BBD', name: 'Barbadian Dollar', symbol: '$' },
+    { code: 'BDT', name: 'Bangladeshi Taka', symbol: '৳' },
+    { code: 'BGN', name: 'Bulgarian Lev', symbol: 'лв' },
+    { code: 'BHD', name: 'Bahraini Dinar', symbol: 'د.ب' },
+    { code: 'BIF', name: 'Burundi Franc', symbol: 'FBu' },
+    { code: 'BND', name: 'Brunei Dollar', symbol: '$' },
+    { code: 'BOB', name: 'Bolivian Boliviano', symbol: 'Bs' },
     { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+    { code: 'BSD', name: 'Bahamian Dollar', symbol: '$' },
+    { code: 'BTN', name: 'Bhutanese Ngultrum', symbol: 'Nu.' },
+    { code: 'BWP', name: 'Botswanan Pula', symbol: 'P' },
+    { code: 'BYN', name: 'Belarusian Ruble', symbol: 'Br' },
+    { code: 'BZD', name: 'Belize Dollar', symbol: '$' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+    { code: 'CDF', name: 'Congolese Franc', symbol: 'FC' },
+    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+    { code: 'CLF', name: 'Chilean Unit Of Account', symbol: 'UF' },
+    { code: 'CLP', name: 'Chilean Peso', symbol: '$' },
+    { code: 'CNY', name: 'Chinese Yuan Renminbi', symbol: '¥' },
+    { code: 'COP', name: 'Colombian Peso', symbol: '$' },
+    { code: 'CRC', name: 'Costa Rican Colon', symbol: '₡' },
+    { code: 'CVE', name: 'Cape Verdean Escudo', symbol: '$' },
+    { code: 'CZK', name: 'Czech Koruna', symbol: 'Kč' },
+    { code: 'DJF', name: 'Djiboutian Franc', symbol: 'Fdj' },
+    { code: 'DKK', name: 'Danish Krone', symbol: 'kr' },
+    { code: 'DOP', name: 'Dominican Peso', symbol: '$' },
+    { code: 'DZD', name: 'Algerian Dinar', symbol: 'د.ج' },
+    { code: 'EGP', name: 'Egyptian Pound', symbol: '£' },
+    { code: 'ERN', name: 'Eritrean Nakfa', symbol: 'Nfk' },
+    { code: 'ETB', name: 'Ethiopian Birr', symbol: 'Br' },
+    { code: 'EUR', name: 'European Euro', symbol: '€' },
+    { code: 'FJD', name: 'Fijian Dollar', symbol: '$' },
+    { code: 'FKP', name: 'Falkland Islands Pound', symbol: '£' },
+    { code: 'GBP', name: 'Pound Sterling', symbol: '£' },
+    { code: 'GEL', name: 'Georgian Lari', symbol: '₾' },
+    { code: 'GHS', name: 'Ghanaian Cedi', symbol: '₵' },
+    { code: 'GIP', name: 'Gibraltar Pound', symbol: '£' },
+    { code: 'GMD', name: 'Gambian Dalasi', symbol: 'D' },
+    { code: 'GNF', name: 'Guinean Franc', symbol: 'FG' },
+    { code: 'GTQ', name: 'Guatemalan Quetzal', symbol: 'Q' },
+    { code: 'GYD', name: 'Guyanese Dollar', symbol: '$' },
+    { code: 'HKD', name: 'Hong Kong Dollar', symbol: '$' },
+    { code: 'HNL', name: 'Honduran Lempira', symbol: 'L' },
+    { code: 'HRK', name: 'Croatian Kuna', symbol: 'kn' },
+    { code: 'HTG', name: 'Haitian Gourde', symbol: 'G' },
+    { code: 'HUF', name: 'Hungarian Forint', symbol: 'Ft' },
+    { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp' },
+    { code: 'ILS', name: 'Israeli New Shekel', symbol: '₪' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'IQD', name: 'Iraqi Dinar', symbol: 'د.ع' },
+    { code: 'IRR', name: 'Iranian Rial', symbol: '﷼' },
+    { code: 'ISK', name: 'Icelandic Krona', symbol: 'kr' },
+    { code: 'JMD', name: 'Jamaican Dollar', symbol: '$' },
+    { code: 'JOD', name: 'Jordanian Dinar', symbol: 'د.ا' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+    { code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh' },
+    { code: 'KGS', name: 'Kyrgyzstani Som', symbol: 'с' },
+    { code: 'KHR', name: 'Cambodian Riel', symbol: '៛' },
+    { code: 'KMF', name: 'Comorian Franc', symbol: 'CF' },
+    { code: 'KRW', name: 'South Korean Won', symbol: '₩' },
+    { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'د.ك' },
+    { code: 'KYD', name: 'Cayman Islands Dollar', symbol: '$' },
+    { code: 'KZT', name: 'Kazakhstani Tenge', symbol: '₸' },
+    { code: 'LAK', name: 'Lao Kip', symbol: '₭' },
+    { code: 'LBP', name: 'Lebanese Pound', symbol: 'ل.ل' },
+    { code: 'LKR', name: 'Sri Lankan Rupee', symbol: '₨' },
+    { code: 'LRD', name: 'Liberian Dollar', symbol: '$' },
+    { code: 'LSL', name: 'Lesotho Loti', symbol: 'L' },
+    { code: 'LYD', name: 'Libyan Dinar', symbol: 'ل.د' },
+    { code: 'MAD', name: 'Moroccan Dirham', symbol: 'د.م.' },
+    { code: 'MDL', name: 'Moldovan Leu', symbol: 'L' },
+    { code: 'MGA', name: 'Malagasy Ariary', symbol: 'Ar' },
+    { code: 'MKD', name: 'Macedonian Denar', symbol: 'ден' },
+    { code: 'MMK', name: 'Myanmar Kyat', symbol: 'K' },
+    { code: 'MNT', name: 'Mongolian Tugrik', symbol: '₮' },
+    { code: 'MOP', name: 'Macanese Pataca', symbol: 'MOP$' },
+    { code: 'MRO', name: 'Mauritanian Ouguiya', symbol: 'UM' },
+    { code: 'MUR', name: 'Mauritian Rupee', symbol: '₨' },
+    { code: 'MVR', name: 'Maldivian Rufiyaa', symbol: 'Rf' },
+    { code: 'MWK', name: 'Malawian Kwacha', symbol: 'MK' },
     { code: 'MXN', name: 'Mexican Peso', symbol: '$' },
-    { code: 'KRW', name: 'South Korean Won', symbol: '₩' }
+    { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
+    { code: 'MZN', name: 'Mozambican Metical', symbol: 'MT' },
+    { code: 'NAD', name: 'Namibian Dollar', symbol: '$' },
+    { code: 'NGN', name: 'Nigerian Naira', symbol: '₦' },
+    { code: 'NIO', name: 'Nicaraguan Cordoba', symbol: 'C$' },
+    { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr' },
+    { code: 'NPR', name: 'Nepalese Rupee', symbol: '₨' },
+    { code: 'NZD', name: 'New Zealand Dollar', symbol: '$' },
+    { code: 'OMR', name: 'Omani Rial', symbol: '﷼' },
+    { code: 'PAB', name: 'Panamanian Balboa', symbol: 'B/.' },
+    { code: 'PEN', name: 'Peruvian Sol', symbol: 'S/' },
+    { code: 'PHP', name: 'Philippine Peso', symbol: '₱' },
+    { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨' },
+    { code: 'PLN', name: 'Polish Zloty', symbol: 'zł' },
+    { code: 'PYG', name: 'Paraguayan Guarani', symbol: '₲' },
+    { code: 'QAR', name: 'Qatari Riyal', symbol: '﷼' },
+    { code: 'RON', name: 'Romanian Leu', symbol: 'lei' },
+    { code: 'RSD', name: 'Serbian Dinar', symbol: 'дин' },
+    { code: 'RUB', name: 'Russian Ruble', symbol: '₽' },
+    { code: 'RWF', name: 'Rwandan Franc', symbol: 'RF' },
+    { code: 'SAR', name: 'Saudi Arabian Riyal', symbol: '﷼' },
+    { code: 'SCR', name: 'Seychellois Rupee', symbol: '₨' },
+    { code: 'SDG', name: 'Sudanese Pound', symbol: 'ج.س.' },
+    { code: 'SEK', name: 'Swedish Krona', symbol: 'kr' },
+    { code: 'SGD', name: 'Singapore Dollar', symbol: '$' },
+    { code: 'SHP', name: 'Saint Helena Pound', symbol: '£' },
+    { code: 'SLL', name: 'Sierra Leonean Leone', symbol: 'Le' },
+    { code: 'SOS', name: 'Somali Shilling', symbol: 'S' },
+    { code: 'SRD', name: 'Surinamese Dollar', symbol: '$' },
+    { code: 'STN', name: 'Sao Tome And Principe Dobra', symbol: 'Db' },
+    { code: 'SYP', name: 'Syrian Pound', symbol: '£' },
+    { code: 'SVC', name: 'Salvadoran Colón', symbol: '₡' },
+    { code: 'SZL', name: 'Swazi Lilangeni', symbol: 'L' },
+    { code: 'THB', name: 'Thai Baht', symbol: '฿' },
+    { code: 'TJS', name: 'Tajikistani Somoni', symbol: 'SM' },
+    { code: 'TMT', name: 'Turkmen Manat', symbol: 'T' },
+    { code: 'TND', name: 'Tunisian Dinar', symbol: 'د.ت' },
+    { code: 'TOP', name: 'Tongan Paʻanga', symbol: 'T$' },
+    { code: 'TRY', name: 'Turkish Lira', symbol: '₺' },
+    { code: 'TTD', name: 'Trinidad And Tobago Dollar', symbol: '$' },
+    { code: 'TWD', name: 'New Taiwan Dollar', symbol: '$' },
+    { code: 'TZS', name: 'Tanzanian Shilling', symbol: 'TSh' },
+    { code: 'UAH', name: 'Ukrainian Hryvnia', symbol: '₴' },
+    { code: 'UGX', name: 'Ugandan Shilling', symbol: 'USh' },
+    { code: 'USD', name: 'United States Dollar', symbol: '$' },
+    { code: 'UYU', name: 'Uruguayan Peso', symbol: '$' },
+    { code: 'UZS', name: 'Uzbekistani Som', symbol: 'soʻm' },
+    { code: 'VES', name: 'Venezuelan Bolivar', symbol: 'Bs.S' },
+    { code: 'VND', name: 'Vietnamese Dong', symbol: '₫' },
+    { code: 'VUV', name: 'Vanuatu Vatu', symbol: 'Vt' },
+    { code: 'WST', name: 'Samoan Tala', symbol: 'WS$' },
+    { code: 'XAF', name: 'Central African CFA Franc', symbol: 'FCFA' },
+    { code: 'XCD', name: 'East Caribbean Dollar', symbol: '$' },
+    { code: 'XOF', name: 'West African CFA Franc', symbol: 'CFA' },
+    { code: 'XPF', name: 'CFP Franc', symbol: '₣' },
+    { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
+    { code: 'ZAR', name: 'South African Rand', symbol: 'R' },
+    { code: 'ZMW', name: 'Zambian Kwacha', symbol: 'ZK' },
+    
+    // Cryptocurrencies (Alphabetical Order)
+    { code: 'ADA', name: 'Cardano', symbol: '₳' },
+    { code: 'BNB', name: 'Binance Coin', symbol: 'BNB' },
+    { code: 'BTC', name: 'Bitcoin', symbol: '₿' },
+    { code: 'DOGE', name: 'Dogecoin', symbol: 'Ð' },
+    { code: 'DOT', name: 'Polkadot', symbol: 'DOT' },
+    { code: 'ETH', name: 'Ethereum', symbol: 'Ξ' },
+    { code: 'LINK', name: 'Chainlink', symbol: 'LINK' },
+    { code: 'LTC', name: 'Litecoin', symbol: 'Ł' },
+    { code: 'SOL', name: 'Solana', symbol: '◎' },
+    { code: 'TRX', name: 'Tron', symbol: 'TRX' },
+    { code: 'USDC', name: 'USD Coin', symbol: 'USDC' },
+    { code: 'USDT', name: 'Tether', symbol: 'USDT' },
+    { code: 'XRP', name: 'Ripple', symbol: 'XRP' }
   ];
+  
   return createSuccessResponse({ currencies }, context.request_id);
 }
 
 // GET /api/tools/unit-converter/currency/rates
 export async function getCurrencyRates(context: RequestContext): Promise<Response> {
-  return createSuccessResponse({
-    lastUpdated: new Date().toISOString(),
-    source: 'mock-exchange-api',
-    nextUpdate: new Date(Date.now() + 3600000).toISOString()
-  }, context.request_id);
+  try {
+    const metadata = await getForexMetadata(context);
+    
+    return createSuccessResponse({
+      lastUpdated: metadata.lastUpdated,
+      source: metadata.source,
+      isExpired: metadata.isExpired,
+      nextUpdate: metadata.nextUpdate,
+      ratesCount: metadata.ratesCount,
+      apiQuotaUsed: metadata.apiQuotaUsed,
+      apiQuotaTotal: metadata.apiQuotaTotal
+    }, context.request_id);
+  } catch (error) {
+    console.error('Failed to get currency rates metadata:', error);
+    return createErrorResponse('Failed to retrieve rate metadata', 'METADATA_ERROR', 500, context.request_id);
+  }
 }

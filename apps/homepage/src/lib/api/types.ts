@@ -17,7 +17,9 @@ export interface CurrencyConversionResponse {
     currency: string;
   };
   exchangeRate: number;
-  date: string;
+  source: 'cache' | 'expired-cache';
+  isExpired: boolean;
+  lastUpdated: string;
   timestamp: string;
 }
 
@@ -29,8 +31,12 @@ export interface Currency {
 
 export interface CurrencyRatesResponse {
   lastUpdated: string;
-  source: string;
+  source: 'api' | 'cache';
+  isExpired: boolean;
   nextUpdate: string;
+  ratesCount?: number;
+  apiQuotaUsed?: number;
+  apiQuotaTotal?: number;
 }
 
 export interface UnitConversionRequest {
