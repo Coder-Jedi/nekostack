@@ -124,31 +124,80 @@ export function adminAuthMiddleware(options: Partial<AuthOptions> = {}): (contex
 // Helper function to validate JWT token
 async function validateJWT(token: string, env: any): Promise<any> {
   try {
-    // For now, we'll do basic JWT validation
-    // In production, you'd want to verify the signature with Supabase
     const parts = token.split('.');
     if (parts.length !== 3) {
       throw new Error('Invalid JWT format');
     }
 
+    // Get Supabase JWT secret
+    const secret = env.SUPABASE_JWT_SECRET;
+    if (!secret) {
+      console.error('SUPABASE_JWT_SECRET not configured');
+      return null;
+    }
+
+    // Verify signature using Web Crypto API
+    const encoder = new TextEncoder();
+    const data = encoder.encode(`${parts[0]}.${parts[1]}`);
+    const signature = base64UrlDecode(parts[2] || '');
+    
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
+    
+    const isValid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      signature,
+      data
+    );
+    
+    if (!isValid) {
+      throw new Error('Invalid signature');
+    }
+
+    // Parse and validate payload
     const payload = JSON.parse(atob(parts[1] || ''));
     
     // Check expiration
     if (payload.exp && payload.exp < Date.now() / 1000) {
       throw new Error('Token expired');
     }
+    
+    // Validate Supabase-specific claims
+    if (payload.aud !== 'authenticated') {
+      throw new Error('Invalid token audience');
+    }
 
-    // Return user info
     return {
-      id: payload.sub || payload.user_id,
+      id: payload.sub,
       email: payload.email,
-      is_admin: payload.is_admin || false,
-      role: payload.role || 'user'
+      role: payload.role || 'authenticated',
+      is_admin: payload.user_metadata?.is_admin || false
     };
   } catch (error) {
     console.error('JWT validation error:', error);
     return null;
   }
+}
+
+// Helper function for base64url decoding
+function base64UrlDecode(str: string): Uint8Array {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = str.length % 4;
+  if (pad) {
+    str += '='.repeat(4 - pad);
+  }
+  const binary = atob(str);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
 
 // Helper function to extract user ID from token

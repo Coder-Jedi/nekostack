@@ -2,16 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { ArrowLeftRight, Star, Calculator, DollarSign } from 'lucide-react'
-import { useAuth } from '@/lib/auth/supabase-auth-provider'
 import { UnitConverter } from '@/components/tools/unit-converter/unit-converter'
 import { CurrencyConverter } from '@/components/tools/unit-converter/currency-converter'
 import { ConversionHistory } from '@/components/tools/unit-converter/conversion-history'
 import { useAnalytics } from '@/lib/analytics'
-import { historyService } from '@/lib/api/services/history'
 import { ConversionHistoryItem } from '@/lib/api/types'
 
 export default function UnitConverterPage() {
-  const { user, session } = useAuth()
   const [activeTab, setActiveTab] = useState<'units' | 'currency'>('units')
   const [conversionHistory, setConversionHistory] = useState<ConversionHistoryItem[]>([])
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
@@ -26,82 +23,40 @@ export default function UnitConverterPage() {
     })
   }, [toolUsed])
 
-  // Reset history loading state when user changes
-  useEffect(() => {
-    setHasLoadedHistory(false)
-  }, [user])
-
-  // Load history only once when component mounts or user changes
+  // Load history only once when component mounts
   useEffect(() => {
     if (hasLoadedHistory || isLoadingHistory) return
 
-    const loadHistory = async () => {
+    const loadHistory = () => {
       setIsLoadingHistory(true)
       
       try {
-        if (user) {
-          // Load from API for authenticated users
-          try {
-            const apiHistory = await historyService.getHistory(50)
-            setConversionHistory(apiHistory)
-          } catch (error) {
-            console.warn('Failed to load history from API:', error)
-            // Fallback to localStorage
-            loadLocalHistory()
-          }
-        } else {
-          // Load from localStorage for non-authenticated users
-          loadLocalHistory()
+        const savedHistory = localStorage.getItem('unit-converter-history')
+        if (savedHistory) {
+          setConversionHistory(JSON.parse(savedHistory))
         }
+      } catch (error) {
+        console.error('Failed to load conversion history:', error)
       } finally {
         setIsLoadingHistory(false)
         setHasLoadedHistory(true)
       }
     }
 
-    const loadLocalHistory = () => {
-      const savedHistory = localStorage.getItem('unit-converter-history')
-      if (savedHistory) {
-        try {
-          setConversionHistory(JSON.parse(savedHistory))
-        } catch (error) {
-          console.error('Failed to load conversion history:', error)
-        }
-      }
-    }
-
     loadHistory()
-  }, [user, hasLoadedHistory, isLoadingHistory])
+  }, [hasLoadedHistory, isLoadingHistory])
 
   const addToHistory = async (conversion: ConversionHistoryItem) => {
     const newHistory = [conversion, ...conversionHistory.slice(0, 49)] // Keep last 50 conversions
     setConversionHistory(newHistory)
     
-    // Always save to localStorage for offline access
+    // Save to localStorage for all users
     localStorage.setItem('unit-converter-history', JSON.stringify(newHistory))
-    
-    // Sync to API for authenticated users
-    if (user) {
-      try {
-        await historyService.saveConversion(conversion)
-      } catch (error) {
-        console.warn('Failed to sync conversion to API:', error)
-      }
-    }
   }
 
   const clearHistory = async () => {
     setConversionHistory([])
     localStorage.removeItem('unit-converter-history')
-    
-    // Clear from API for authenticated users
-    if (user) {
-      try {
-        await historyService.clearHistory()
-      } catch (error) {
-        console.warn('Failed to clear history from API:', error)
-      }
-    }
   }
 
   return (

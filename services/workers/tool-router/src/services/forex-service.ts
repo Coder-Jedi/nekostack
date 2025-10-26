@@ -1,10 +1,7 @@
-// Forex Service - Handles ForexRateAPI integration with KV caching
+// Forex Service - Handles ForexRateAPI integration with D1 caching
 import { RequestContext } from '../../../shared/src/types';
-import { createKVClient } from '../../../shared/src/kv/kv-client';
+import { createD1Client } from '../../../shared/src/database/d1-client';
 import { trackEvent } from '../../../shared/src/utils/analytics-client';
-
-// 7 days TTL for physical KV expiration
-const KV_TTL_SECONDS = 604800;
 
 // Cache expiration time: 5 PM EST (10 PM UTC / 22:00 UTC)
 const DAILY_MARKET_CLOSE_HOUR = 22; // 10 PM UTC (5 PM EST)
@@ -62,31 +59,41 @@ export async function fetchRatesFromAPI(context: RequestContext): Promise<Record
 }
 
 /**
- * Get cached rates from KV
+ * Get cached rates from D1
  */
 export async function getCachedRates(context: RequestContext): Promise<ForexRateCache | null> {
-  const kvClient = createKVClient(context.env);
+  const d1Client = createD1Client(context.env);
   
-  const ratesData = await kvClient.get<Record<string, number>>('forex:rates:usd', true);
-  const metadata = await kvClient.get<ForexMetadata>('forex:rates:metadata', true);
+  // Get the latest rates entry
+  const result = await d1Client.get<{
+    rates: string;
+    last_updated: string;
+    source: string;
+    is_expired: number;
+  }>(
+    'SELECT rates, last_updated, source, is_expired FROM forex_rates ORDER BY id DESC LIMIT 1',
+    []
+  );
 
-  if (!ratesData || !metadata) {
+  if (!result) {
     return null;
   }
 
-  const isExpired = checkIfExpired(metadata.lastUpdated);
+  // Parse JSON rates
+  const rates = JSON.parse(result.rates) as Record<string, number>;
+  const isExpired = checkIfExpired(result.last_updated);
   
   return {
-    rates: ratesData,
-    timestamp: metadata.lastUpdated,
-    source: metadata.source,
+    rates,
+    timestamp: result.last_updated,
+    source: result.source as 'api' | 'cache',
     isExpired,
-    lastUpdated: metadata.lastUpdated
+    lastUpdated: result.last_updated
   };
 }
 
 /**
- * Set cached rates in KV
+ * Set cached rates in D1
  */
 export async function setCachedRates(
   context: RequestContext,
@@ -94,24 +101,32 @@ export async function setCachedRates(
   quotaUsed?: number,
   quotaTotal?: number
 ): Promise<void> {
-  const kvClient = createKVClient(context.env);
+  const d1Client = createD1Client(context.env);
   const now = new Date().toISOString();
 
-  // Store rates with 7-day TTL
-  await kvClient.cache('forex:rates:usd', rates, KV_TTL_SECONDS);
+  // Insert new rates entry
+  await d1Client.execute(
+    `INSERT INTO forex_rates (rates, last_updated, source, is_expired, rates_count, api_quota_used, api_quota_total, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      JSON.stringify(rates),
+      now,
+      'api',
+      0, // is_expired = false
+      Object.keys(rates).length,
+      quotaUsed || null,
+      quotaTotal || null,
+      now,
+      now
+    ]
+  );
 
-  // Store metadata with 7-day TTL
-  const metadata: ForexMetadata = {
-    lastUpdated: now,
-    source: 'api',
-    isExpired: false,
-    nextUpdate: getNextUpdateTime(),
-    ratesCount: Object.keys(rates).length,
-    apiQuotaUsed: quotaUsed,
-    apiQuotaTotal: quotaTotal
-  };
-
-  await kvClient.cache('forex:rates:metadata', metadata, KV_TTL_SECONDS);
+  // Optional: Clean up old entries (keep last 30 days for audit)
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  await d1Client.execute(
+    'DELETE FROM forex_rates WHERE created_at < ?',
+    [thirtyDaysAgo]
+  );
 }
 
 /**
@@ -284,18 +299,35 @@ export async function updateForexRatesFromAPI(context: RequestContext): Promise<
  * Get forex metadata for rates endpoint
  */
 export async function getForexMetadata(context: RequestContext): Promise<ForexMetadata> {
-  const kvClient = createKVClient(context.env);
-  const metadata = await kvClient.get<ForexMetadata>('forex:rates:metadata', true);
+  const d1Client = createD1Client(context.env);
+  
+  const result = await d1Client.get<{
+    last_updated: string;
+    source: string;
+    rates_count: number;
+    api_quota_used: number | null;
+    api_quota_total: number | null;
+  }>(
+    'SELECT last_updated, source, rates_count, api_quota_used, api_quota_total FROM forex_rates ORDER BY id DESC LIMIT 1',
+    []
+  );
 
-  if (!metadata) {
+  if (!result) {
     throw new Error('No forex metadata available');
   }
 
   // Check if expired based on current logic
-  metadata.isExpired = isExpired(metadata.lastUpdated);
-  metadata.nextUpdate = getNextUpdateTime();
+  const isExpired = checkIfExpired(result.last_updated);
 
-  return metadata;
+  return {
+    lastUpdated: result.last_updated,
+    source: result.source as 'api' | 'cache',
+    isExpired,
+    nextUpdate: getNextUpdateTime(),
+    ratesCount: result.rates_count,
+    apiQuotaUsed: result.api_quota_used || undefined,
+    apiQuotaTotal: result.api_quota_total || undefined
+  };
 }
 
 /**

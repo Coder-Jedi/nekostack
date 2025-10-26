@@ -10,6 +10,7 @@ export interface Env {
   ENVIRONMENT?: string;
   ANALYTICS_RETENTION_DAYS?: string;
   REAL_TIME_AGGREGATION?: string;
+  SUPABASE_JWT_SECRET?: string;
 }
 
 export interface ApiResponse<T = any> {

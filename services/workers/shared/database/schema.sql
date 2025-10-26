@@ -162,6 +162,22 @@ CREATE TABLE IF NOT EXISTS api_rate_limits (
 );
 
 -- ============================================================================
+-- FOREX RATES TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS forex_rates (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  rates TEXT NOT NULL, -- JSON string of rates object
+  last_updated TEXT NOT NULL,
+  source TEXT NOT NULL CHECK (source IN ('api', 'cache')),
+  is_expired INTEGER NOT NULL DEFAULT 0, -- 0 = false, 1 = true
+  rates_count INTEGER NOT NULL,
+  api_quota_used INTEGER,
+  api_quota_total INTEGER,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================================
 -- INDEXES for Performance
 -- ============================================================================
 
@@ -205,6 +221,10 @@ CREATE INDEX IF NOT EXISTS idx_rate_limits_endpoint ON api_rate_limits(endpoint)
 CREATE INDEX IF NOT EXISTS idx_rate_limits_user_id ON api_rate_limits(user_id);
 CREATE INDEX IF NOT EXISTS idx_rate_limits_window ON api_rate_limits(window_start);
 
+-- Forex rates indexes
+CREATE INDEX IF NOT EXISTS idx_forex_rates_last_updated ON forex_rates(last_updated DESC);
+CREATE INDEX IF NOT EXISTS idx_forex_rates_created_at ON forex_rates(created_at DESC);
+
 -- ============================================================================
 -- TRIGGERS for updated_at
 -- ============================================================================
@@ -241,6 +261,14 @@ CREATE TRIGGER IF NOT EXISTS update_api_rate_limits_updated_at
   BEGIN
     UPDATE api_rate_limits SET updated_at = CURRENT_TIMESTAMP 
     WHERE endpoint = NEW.endpoint AND user_id = NEW.user_id AND window_start = NEW.window_start;
+  END;
+
+-- Update forex_rates.updated_at
+CREATE TRIGGER IF NOT EXISTS update_forex_rates_updated_at
+  AFTER UPDATE ON forex_rates
+  FOR EACH ROW
+  BEGIN
+    UPDATE forex_rates SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
   END;
 
 -- ============================================================================

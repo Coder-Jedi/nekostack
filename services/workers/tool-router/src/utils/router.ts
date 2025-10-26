@@ -6,34 +6,39 @@ export interface Route {
   method: string;
   path: string;
   handler: (context: RequestContext) => Promise<Response>;
+  middleware?: (context: RequestContext) => Promise<Response> | undefined; // Fix TypeScript strict mode
 }
 
 export class Router {
   private routes: Route[] = [];
 
   // Add a route
-  add(method: string, path: string, handler: (context: RequestContext) => Promise<Response>): void {
-    this.routes.push({ method, path, handler });
+  add(method: string, path: string, handler: (context: RequestContext) => Promise<Response>, middleware?: (context: RequestContext) => Promise<Response>): void {
+    const route: Route = { method, path, handler };
+    if (middleware) {
+      route.middleware = middleware;
+    }
+    this.routes.push(route);
   }
 
   // Add GET route
-  get(path: string, handler: (context: RequestContext) => Promise<Response>): void {
-    this.add('GET', path, handler);
+  get(path: string, handler: (context: RequestContext) => Promise<Response>, middleware?: (context: RequestContext) => Promise<Response>): void {
+    this.add('GET', path, handler, middleware);
   }
 
   // Add POST route
-  post(path: string, handler: (context: RequestContext) => Promise<Response>): void {
-    this.add('POST', path, handler);
+  post(path: string, handler: (context: RequestContext) => Promise<Response>, middleware?: (context: RequestContext) => Promise<Response>): void {
+    this.add('POST', path, handler, middleware);
   }
 
   // Add PUT route
-  put(path: string, handler: (context: RequestContext) => Promise<Response>): void {
-    this.add('PUT', path, handler);
+  put(path: string, handler: (context: RequestContext) => Promise<Response>, middleware?: (context: RequestContext) => Promise<Response>): void {
+    this.add('PUT', path, handler, middleware);
   }
 
   // Add DELETE route
-  delete(path: string, handler: (context: RequestContext) => Promise<Response>): void {
-    this.add('DELETE', path, handler);
+  delete(path: string, handler: (context: RequestContext) => Promise<Response>, middleware?: (context: RequestContext) => Promise<Response>): void {
+    this.add('DELETE', path, handler, middleware);
   }
 
   // Add OPTIONS route
@@ -56,6 +61,14 @@ export class Router {
     }
 
     try {
+      // Apply per-route middleware if defined
+      if (route.middleware) {
+        const middlewareResult = await route.middleware(context);
+        if (middlewareResult && middlewareResult.status !== 200) {
+          return middlewareResult;
+        }
+      }
+      
       return await route.handler(context);
     } catch (error) {
       console.error('Route handler error:', error);

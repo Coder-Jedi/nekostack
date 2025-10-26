@@ -2,7 +2,7 @@
 
 import { Env, RequestContext } from '../../shared/src/types';
 import { createRouter } from './utils/router';
-import { createPublicMiddleware, applyMiddlewareToResponse } from './middleware/index';
+import { createPublicMiddleware, applyMiddlewareToResponse, createProtectedMiddleware } from './middleware/index';
 
 // Import route handlers
 import { convertUnits, convertCurrency, getConversionCategories, getCurrencyList, getCurrencyRates } from './routes/unit-converter';

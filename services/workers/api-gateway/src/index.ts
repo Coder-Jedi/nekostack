@@ -11,9 +11,13 @@ import { getSystemStatus, getSystemConfig, getSystemConfigValue, getHealthCheck,
 import { getAnnouncements, getAnnouncementById, getActiveAnnouncements, getAnnouncementsByPriority, getAnnouncementsByAudience } from './routes/announcements';
 import { getChangelog, getChangelogByVersion, getRecentChangelog, getLatestVersion } from './routes/changelog';
 import { getUserHistory, saveUserHistory, clearUserHistory } from './routes/user-history';
+import { createProtectedMiddleware } from './middleware/index';
 
 // Create router
 const router = createRouter();
+
+// Create protected middleware for user routes
+const protectedMiddleware = createProtectedMiddleware();
 
 // Register routes
 // Tools routes
@@ -47,10 +51,10 @@ router.get('/api/changelog/latest', getLatestVersion);
 router.get('/api/changelog/recent', getRecentChangelog);
 router.get('/api/changelog/version/:version', getChangelogByVersion);
 
-// User History routes
-router.get('/api/user/conversion-history', getUserHistory);
-router.post('/api/user/conversion-history', saveUserHistory);
-router.delete('/api/user/conversion-history', clearUserHistory);
+// User History routes (protected)
+router.get('/api/user/conversion-history', getUserHistory, protectedMiddleware);
+router.post('/api/user/conversion-history', saveUserHistory, protectedMiddleware);
+router.delete('/api/user/conversion-history', clearUserHistory, protectedMiddleware);
 
 // CORS preflight
 router.options('*', async () => {

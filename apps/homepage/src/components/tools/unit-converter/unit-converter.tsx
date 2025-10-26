@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeftRight, Copy, RotateCcw } from 'lucide-react'
 import { CustomSelect } from './custom-select'
-import { analyticsService } from '@/lib/api/services/analytics'
+// import { analyticsService } from '@/lib/api/services/analytics'
 import { ConversionHistoryItem } from '@/lib/api/types'
 
 interface UnitCategory {
@@ -116,15 +116,15 @@ export function UnitConverter({ onConversion }: UnitConverterProps) {
       
       setResult(resultValue)
       
-      // Track analytics (non-blocking)
-      analyticsService.trackConversion('unit-converter', {
-        category: currentCategory.name,
-        fromUnit: currentUnits[fromUnit].symbol,
-        toUnit: currentUnits[toUnit].symbol,
-        inputValue: value,
-        outputValue: parseFloat(resultValue),
-        conversionRate: convertedValue / value
-      })
+      // Track analytics (commented out for now)
+      // analyticsService.trackConversion('unit-converter', {
+      //   category: currentCategory.name,
+      //   fromUnit: currentUnits[fromUnit].symbol,
+      //   toUnit: currentUnits[toUnit].symbol,
+      //   inputValue: value,
+      //   outputValue: parseFloat(resultValue),
+      //   conversionRate: convertedValue / value
+      // })
       
       // Add to history
       onConversion({

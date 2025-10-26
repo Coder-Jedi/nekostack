@@ -109,7 +109,7 @@ export function Footer() {
           <div className="mt-8 pt-8 border-t">
             <div className="flex flex-col sm:flex-row justify-between items-center">
               <p className="text-sm text-muted-foreground">
-                © 2024 NekoStack. All rights reserved.
+                © 2025 NekoStack. All rights reserved.
               </p>
               <p className="text-sm text-muted-foreground flex items-center mt-2 sm:mt-0">
                 Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> for productivity
