@@ -30,13 +30,13 @@ export interface Currency {
 }
 
 export interface CurrencyRatesResponse {
+  rates: Record<string, number>; // USD-based rates
   lastUpdated: string;
   source: 'api' | 'cache';
   isExpired: boolean;
   nextUpdate: string;
   ratesCount?: number;
-  apiQuotaUsed?: number;
-  apiQuotaTotal?: number;
+  // apiQuotaUsed and apiQuotaTotal removed - not needed by frontend
 }
 
 export interface UnitConversionRequest {

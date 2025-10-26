@@ -7,7 +7,7 @@ import {
   createErrorResponse 
 } from '../../../shared/src/utils/response';
 import { validateBody, requestSchemas } from '../../../shared/src/utils/validation';
-import { getExchangeRate, getForexMetadata } from '../services/forex-service';
+import { getExchangeRate, getForexMetadata, getCachedRates } from '../services/forex-service';
 
 // POST /api/tools/unit-converter - Convert units
 export async function convertUnits(context: RequestContext): Promise<Response> {
@@ -444,19 +444,25 @@ export async function getCurrencyList(context: RequestContext): Promise<Response
 // GET /api/tools/unit-converter/currency/rates
 export async function getCurrencyRates(context: RequestContext): Promise<Response> {
   try {
+    const cache = await getCachedRates(context);
+    
+    if (!cache) {
+      return createErrorResponse('No forex rates available', 'NO_RATES', 503, context.request_id);
+    }
+    
     const metadata = await getForexMetadata(context);
     
     return createSuccessResponse({
+      rates: cache.rates, // Add the actual rates object
       lastUpdated: metadata.lastUpdated,
       source: metadata.source,
       isExpired: metadata.isExpired,
       nextUpdate: metadata.nextUpdate,
-      ratesCount: metadata.ratesCount,
-      apiQuotaUsed: metadata.apiQuotaUsed,
-      apiQuotaTotal: metadata.apiQuotaTotal
+      ratesCount: metadata.ratesCount
+      // Note: apiQuotaUsed and apiQuotaTotal removed - not needed by frontend
     }, context.request_id);
   } catch (error) {
-    console.error('Failed to get currency rates metadata:', error);
-    return createErrorResponse('Failed to retrieve rate metadata', 'METADATA_ERROR', 500, context.request_id);
+    console.error('Failed to get currency rates:', error);
+    return createErrorResponse('Failed to retrieve rates', 'RATES_ERROR', 500, context.request_id);
   }
 }

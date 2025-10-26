@@ -5,6 +5,7 @@ import { ArrowLeftRight, Copy, RotateCcw, RefreshCw, TrendingUp, AlertCircle } f
 import { CustomSelect } from './custom-select'
 import { currencyService } from '@/lib/api/services/currency'
 import { Currency, ConversionHistoryItem } from '@/lib/api/types'
+import { getCachedRatesFromStorage, setCachedRatesToStorage, clearCachedRates } from '@/lib/utils/rates-cache'
 
 // Fallback currencies for client-side conversion
 const fallbackCurrencies: Currency[] = [
@@ -180,94 +181,110 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
   const [toCurrency, setToCurrency] = useState(1)
   const [inputValue, setInputValue] = useState('')
   const [result, setResult] = useState('')
-  const [isConverting, setIsConverting] = useState(false)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [exchangeRate, setExchangeRate] = useState(1)
+  
+  // New state for rates management
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number> | null>(null)
+  const [ratesMetadata, setRatesMetadata] = useState<{ lastUpdated: string; isExpired: boolean } | null>(null)
+  const [ratesError, setRatesError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
+  const [lastConversionKey, setLastConversionKey] = useState<string>('')
 
-  // Client-side fallback conversion (simplified)
-  const convertCurrencyClientSide = (amount: number, fromCode: string, toCode: string) => {
-    // Mock rates for fallback
-    const mockRates: Record<string, number> = {
-      'USD': 1,
-      'EUR': 0.85,
-      'GBP': 0.73,
-      'JPY': 110,
-      'CAD': 1.25,
-      'AUD': 1.35,
-      'CHF': 0.92,
-      'CNY': 6.45,
-      'INR': 74.5,
-      'BRL': 5.2,
-      'MXN': 20.1,
-      'KRW': 1180
-    }
-    
-    const fromRate = mockRates[fromCode] || 1
-    const toRate = mockRates[toCode] || 1
-    return (amount / fromRate) * toRate
-  }
-
-  const handleConvert = useCallback(async () => {
-    if (!inputValue || isNaN(Number(inputValue))) return
-
-    setIsConverting(true)
-    setApiError(null)
+  // Function to fetch rates with retry logic
+  const fetchRates = useCallback(async (isRetry = false) => {
+    setRatesError(null)
     
     try {
-      const amount = Number(inputValue)
-      const fromCode = currencies[fromCurrency].code
-      const toCode = currencies[toCurrency].code
-      
-      let convertedAmount: number
-      let rate: number
-      
-      try {
-        // Try API conversion first
-        const response = await currencyService.convert({
-          amount,
-          fromCurrency: fromCode,
-          toCurrency: toCode
-        })
-        
-        convertedAmount = response.converted.amount
-        rate = response.exchangeRate
-        setExchangeRate(rate)
-        
-        // Show warning if using expired cache
-        if (response.isExpired) {
-          setApiError('Using cached rates from previous day')
-          setLastUpdated(new Date(response.lastUpdated))
-        } else {
-          setApiError(null)
-          setLastUpdated(new Date(response.lastUpdated))
-        }
-        
-      } catch (error) {
-        console.error('API conversion failed:', error)
-        setApiError('Currency conversion service unavailable. Please try again later.')
-        throw error // Re-throw to be caught by outer catch
+      // Check localStorage cache first
+      const cached = getCachedRatesFromStorage()
+      if (cached && !isRetry) {
+        setExchangeRates(cached.rates)
+        setRatesMetadata({ lastUpdated: cached.lastUpdated, isExpired: cached.isExpired })
+        return
       }
       
-      setResult(convertedAmount.toFixed(2))
+      // Fetch from API
+      const response = await currencyService.refreshRates()
+      setExchangeRates(response.rates)
+      setRatesMetadata({ lastUpdated: response.lastUpdated, isExpired: response.isExpired })
       
-      // Add to history
+      // Cache in localStorage
+      setCachedRatesToStorage(response.rates, response.lastUpdated, response.isExpired)
+      
+      setRetryCount(0)
+    } catch (error) {
+      console.error('Failed to fetch rates:', error)
+      
+      // Retry once after 2 seconds
+      if (retryCount === 0) {
+        setRetryCount(1)
+        setTimeout(() => fetchRates(true), 2000)
+        return
+      }
+      
+      // Show error with retry button
+      setRatesError('Unable to load exchange rates. Please check your connection.')
+    }
+  }, [retryCount])
+
+  // Calculate conversion locally
+  const calculateConversion = useCallback((amount: number, fromCode: string, toCode: string): number => {
+    if (!exchangeRates) return 0
+    
+    // Direct USD conversion
+    if (fromCode === 'USD') {
+      return amount * (exchangeRates[toCode] || 1)
+    }
+    if (toCode === 'USD') {
+      return amount / (exchangeRates[fromCode] || 1)
+    }
+    
+    // Cross-rate: fromCode -> USD -> toCode
+    const fromRate = exchangeRates[fromCode] || 1
+    const toRate = exchangeRates[toCode] || 1
+    const usdAmount = amount / fromRate
+    return usdAmount * toRate
+  }, [exchangeRates])
+
+  const handleConvert = useCallback(() => {
+    if (!inputValue || isNaN(Number(inputValue)) || !exchangeRates) return
+    
+    const amount = Number(inputValue)
+    const fromCode = currencies[fromCurrency].code
+    const toCode = currencies[toCurrency].code
+    
+    // Calculate locally
+    const convertedAmount = calculateConversion(amount, fromCode, toCode)
+    const rate = toCode === 'USD' 
+      ? 1 / (exchangeRates[fromCode] || 1)
+      : fromCode === 'USD'
+      ? exchangeRates[toCode] || 1
+      : (exchangeRates[toCode] || 1) / (exchangeRates[fromCode] || 1)
+    
+    setExchangeRate(rate)
+    setResult(convertedAmount.toFixed(2))
+    
+    // Only save to history if input changed
+    const conversionKey = `${amount}-${fromCode}-${toCode}`
+    if (conversionKey !== lastConversionKey) {
       onConversion({
         type: 'currency',
-        from: `${currencies[fromCurrency].symbol}${amount} ${currencies[fromCurrency].code}`,
-        to: `${currencies[toCurrency].symbol}${convertedAmount.toFixed(2)} ${currencies[toCurrency].code}`,
+        from: `${currencies[fromCurrency].symbol}${amount} ${fromCode}`,
+        to: `${currencies[toCurrency].symbol}${convertedAmount.toFixed(2)} ${toCode}`,
         rate,
         timestamp: new Date().toISOString()
       })
-      
-    } catch (error) {
-      console.error('Conversion error:', error)
-      setApiError('Conversion failed. Please try again.')
-    } finally {
-      setIsConverting(false)
+      setLastConversionKey(conversionKey)
     }
-  }, [inputValue, fromCurrency, toCurrency, currencies, onConversion])
+    
+    // Show warning if rates are expired
+    if (ratesMetadata?.isExpired) {
+      setApiError('Using rates from previous day')
+    }
+  }, [inputValue, fromCurrency, toCurrency, currencies, exchangeRates, calculateConversion, ratesMetadata, onConversion, lastConversionKey])
 
   const handleSwap = () => {
     setFromCurrency(toCurrency)
@@ -287,20 +304,9 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
 
   const handleRefreshRates = async () => {
     setIsRefreshing(true)
-    setApiError(null)
-    
-    try {
-      // Only refresh rates, not currency list (list is already loaded on mount)
-      const ratesResponse = await currencyService.refreshRates()
-      setLastUpdated(new Date(ratesResponse.lastUpdated))
-      
-    } catch (error) {
-      console.warn('Failed to refresh rates:', error)
-      setApiError('Failed to refresh rates - using cached data')
-      setLastUpdated(new Date())
-    } finally {
-      setIsRefreshing(false)
-    }
+    clearCachedRates() // Clear localStorage cache
+    await fetchRates(false)
+    setIsRefreshing(false)
   }
 
   // Load currencies on component mount
@@ -343,6 +349,18 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
     loadCurrencies()
   }, []) // Empty dependency array - only run on mount
 
+  // Initialize rates on component mount
+  useEffect(() => {
+    fetchRates(false)
+  }, [fetchRates])
+
+  // Update lastUpdated when ratesMetadata changes
+  useEffect(() => {
+    if (ratesMetadata?.lastUpdated) {
+      setLastUpdated(new Date(ratesMetadata.lastUpdated))
+    }
+  }, [ratesMetadata])
+
   // Auto-convert when input changes
   useEffect(() => {
     if (inputValue && !isNaN(Number(inputValue))) {
@@ -379,6 +397,20 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
           <div className="mt-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-sm text-yellow-600">
             <AlertCircle className="h-4 w-4" />
             {apiError}
+          </div>
+        )}
+        {ratesError && (
+          <div className="mt-2 flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm">{ratesError}</span>
+            </div>
+            <button
+              onClick={() => fetchRates(false)}
+              className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Retry
+            </button>
           </div>
         )}
       </div>
@@ -487,10 +519,10 @@ export function CurrencyConverter({ onConversion }: CurrencyConverterProps) {
         <div className="flex gap-4">
           <button
             onClick={handleConvert}
-            disabled={!inputValue || isNaN(Number(inputValue)) || isConverting}
+            disabled={!inputValue || isNaN(Number(inputValue)) || !exchangeRates}
             className="flex-1 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 hover:shadow-lg"
           >
-            {isConverting ? 'Converting...' : 'Convert'}
+            Convert
           </button>
           <button
             onClick={handleReset}
