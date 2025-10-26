@@ -15,7 +15,7 @@ import {
   getUsageBgColor
 } from '@/lib/mock-subscription'
 import { 
-  SubscriptionPlan, 
+  SubscriptionPlan as SubscriptionPlanType, 
   BillingHistory, 
   PaymentMethod, 
   SubscriptionUsage,
@@ -54,7 +54,7 @@ export default function BillingPage() {
     setUsage(mockSubscriptionUsage)
   }, [])
 
-  const currentPlan = subscriptionPlans.find(plan => plan.name === user?.subscription.plan) || subscriptionPlans[0]
+  const currentPlan = subscriptionPlans.find(plan => plan.id === user?.subscription.plan) || subscriptionPlans[0]
   const isFreePlan = currentPlan.name === 'free'
 
   const handlePlanUpgrade = (planId: string) => {

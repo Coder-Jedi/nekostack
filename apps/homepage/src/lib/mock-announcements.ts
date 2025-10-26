@@ -81,15 +81,6 @@ export const mockAnnouncements: Announcement[] = [
   }
 ]
 
-export const mockSystemStatus: SystemStatus = {
-  id: 'system-status-1',
-  service: 'NekoStack Platform',
-  status: ServiceStatus.OPERATIONAL,
-  message: 'All systems operational',
-  lastUpdated: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-  incidents: []
-}
-
 export const getAnnouncementIcon = (type: AnnouncementType): string => {
   switch (type) {
     case AnnouncementType.INFO:

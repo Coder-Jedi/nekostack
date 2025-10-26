@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import { useAnnouncementsStore } from '@/stores/announcements-store'
 import { useUserStore } from '@/stores/user-store'
 import { AnnouncementBanner } from './announcement-banner'
-import { mockAnnouncements, mockSystemStatus } from '@/lib/mock-announcements'
+import { mockAnnouncements } from '@/lib/mock-announcements'
+import { mockSystemStatus } from '@/lib/mock-system-status'
 import { Bell, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface AnnouncementsPanelProps {
@@ -64,13 +65,13 @@ export function AnnouncementsPanel({ compact = false, maxItems = 3 }: Announceme
           {/* System Status Indicator */}
           {systemStatus && (
             <div className="flex items-center space-x-2 text-sm">
-              {systemStatus.status === 'operational' ? (
+              {systemStatus.overall === 'operational' ? (
                 <CheckCircle className="h-4 w-4 text-green-500" />
               ) : (
                 <AlertCircle className="h-4 w-4 text-yellow-500" />
               )}
               <span className="text-muted-foreground">
-                {systemStatus.status === 'operational' ? 'All systems operational' : 'Service issues'}
+                {systemStatus.overall === 'operational' ? 'All systems operational' : 'Service issues'}
               </span>
             </div>
           )}

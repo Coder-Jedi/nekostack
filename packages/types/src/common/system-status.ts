@@ -102,7 +102,7 @@ export interface MaintenanceUpdate {
 export interface SystemMetrics {
   uptime: UptimeMetrics
   performance: PerformanceMetrics
-  usage: UsageMetrics
+  usage: SystemUsageMetrics
   errors: ErrorMetrics
 }
 
@@ -122,7 +122,7 @@ export interface PerformanceMetrics {
   errorRate: number // percentage
 }
 
-export interface UsageMetrics {
+export interface SystemUsageMetrics {
   activeUsers: number
   totalRequests: number
   dataProcessed: number // bytes

@@ -29,7 +29,7 @@ import {
   Server, 
   AlertTriangle,
   CheckCircle,
-  Tool,
+  Settings,
   Calendar,
   RefreshCw,
   ExternalLink,
@@ -277,7 +277,7 @@ export default function StatusPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
-                          <Tool className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                          <Settings className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                           <h4 className="font-medium">{maintenance.title}</h4>
                           <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
                             {maintenance.status.charAt(0).toUpperCase() + maintenance.status.slice(1)}

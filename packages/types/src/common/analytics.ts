@@ -7,7 +7,7 @@ export interface UserAnalytics {
   toolUsage: ToolUsageAnalytics[]
   timeSeriesData: TimeSeriesData[]
   topFiles: TopFileAnalytics[]
-  performanceMetrics: PerformanceMetrics
+  performanceMetrics: AnalyticsPerformanceMetrics
   comparisonData: ComparisonData
   goals: AnalyticsGoal[]
 }
@@ -68,7 +68,7 @@ export interface TopFileAnalytics {
   downloadCount: number
 }
 
-export interface PerformanceMetrics {
+export interface AnalyticsPerformanceMetrics {
   averageUploadSpeed: number // MB/s
   averageProcessingSpeed: number // files/minute
   errorRate: number // percentage

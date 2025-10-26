@@ -56,56 +56,28 @@ export interface AnnouncementAction {
   type: 'internal' | 'external'
 }
 
-export interface SystemStatus {
-  id: string
-  service: string
-  status: ServiceStatus
-  message?: string
-  lastUpdated: Date
-  incidents: Incident[]
-}
+export { 
+  ServiceStatus,
+  IncidentStatus,
+  IncidentImpact,
+  MaintenanceStatus,
+  MaintenanceImpact,
+  StatusPageTheme,
+  StatusNotificationMethod
+} from './system-status'
 
-export enum ServiceStatus {
-  OPERATIONAL = 'operational',
-  DEGRADED = 'degraded',
-  PARTIAL_OUTAGE = 'partial_outage',
-  MAJOR_OUTAGE = 'major_outage',
-  MAINTENANCE = 'maintenance'
-}
+export type { 
+  SystemStatus,
+  ServiceStatusDetail,
+  Incident,
+  MaintenanceWindow,
+  SystemMetrics,
+  StatusSubscription,
+  StatusPageConfig,
+  HistoricalData
+} from './system-status'
 
-export interface Incident {
-  id: string
-  title: string
-  description: string
-  status: IncidentStatus
-  severity: IncidentSeverity
-  startedAt: Date
-  resolvedAt?: Date
-  updates: IncidentUpdate[]
-}
-
-export enum IncidentStatus {
-  INVESTIGATING = 'investigating',
-  IDENTIFIED = 'identified',
-  MONITORING = 'monitoring',
-  RESOLVED = 'resolved'
-}
-
-export enum IncidentSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
-}
-
-export interface IncidentUpdate {
-  id: string
-  message: string
-  status: IncidentStatus
-  timestamp: Date
-}
-
-export interface NotificationSettings {
+export interface CommonNotificationSettings {
   announcements: boolean
   systemStatus: boolean
   maintenanceAlerts: boolean

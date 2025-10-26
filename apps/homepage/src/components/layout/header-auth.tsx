@@ -281,7 +281,6 @@ export function HeaderAuth() {
             </div>
           )}
         </div>
-        </div>
       </header>
     </div>
   )

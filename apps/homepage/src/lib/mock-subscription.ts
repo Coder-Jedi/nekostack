@@ -1,5 +1,5 @@
 import { 
-  SubscriptionPlan, 
+  SubscriptionPlan as SubscriptionPlanInterface, 
   BillingHistory, 
   PaymentMethod, 
   PaymentStatus, 
@@ -9,7 +9,45 @@ import {
   ChangeType 
 } from '@nekostack/types'
 
-export const subscriptionPlans: SubscriptionPlan[] = [
+export interface SubscriptionPlanWithId {
+  id: string
+  name: string
+  displayName: string
+  description: string
+  price: {
+    monthly: number
+    yearly: number
+    currency: string
+    yearlyDiscount?: number
+  }
+  features: Array<{
+    id: string
+    name: string
+    description: string
+    included: boolean
+    limit?: number
+    unit?: string
+  }>
+  limits: {
+    toolsPerMonth: number
+    storageLimit: number
+    apiRequestsPerMonth: number
+    maxFileSize: number
+    concurrentProcessing: number
+    prioritySupport: boolean
+    customBranding: boolean
+    apiAccess: boolean
+  }
+  isPopular?: boolean
+  isRecommended?: boolean
+  billingCycles: Array<{
+    interval: 'monthly' | 'yearly'
+    price: number
+    discount?: number
+  }>
+}
+
+export const subscriptionPlans: SubscriptionPlanWithId[] = [
   {
     id: 'free',
     name: 'free',
