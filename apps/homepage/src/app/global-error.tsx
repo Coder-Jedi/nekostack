@@ -19,7 +19,10 @@ export default function GlobalError({
   }, [error])
 
   return (
-    <html>
+    <html lang="en">
+      <head>
+        <title>Application Error</title>
+      </head>
       <body>
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
           <div className="max-w-md w-full text-center">

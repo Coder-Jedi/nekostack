@@ -4,6 +4,9 @@ import { useEffect } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
 
+// Disable static generation for error pages
+export const dynamic = 'force-dynamic'
+
 export default function Error({
   error,
   reset,
